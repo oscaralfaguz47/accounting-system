@@ -1,0 +1,38 @@
+<div id="user-background">
+    <div id="user-form">
+        <i class="fa fa-user-circle" aria-hidden="true"></i>
+        <br>
+        <div class="alert alert-danger" *ngIf="status == 'error'">
+            Credenciales incorrectas
+        </div>
+        <br>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <mat-form-field class="example-full-width">
+                <mat-label>Correo</mat-label>
+                <input name="email" type="email" maxlength="80" matInput value="" formControlName="email">
+                <mat-error *ngIf="loginForm.get('email').hasError('required')">El correo es requerido</mat-error>
+                <mat-error *ngIf="loginForm.get('email').hasError('email')">Ingresa un correo valido</mat-error>
+            </mat-form-field>
+            <br>
+            <br>
+            <mat-form-field class="example-full-width">
+                <mat-label>Contraseña</mat-label>
+                <input maxlength="50" name="password" type="password" matInput value="" formControlName="password">
+                <mat-error>La contraseña es requerida</mat-error>
+            </mat-form-field>
+
+            <br>
+
+            <button id="userBtn" type="submit" mat-button>Iniciar Sesión</button>
+            <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+                <p style="font-size: 20px; color: white">Espere...</p>
+            </ngx-spinner>
+            <br>
+            <br>
+            <span>¿No tienes una cuenta?</span>
+            <br>
+            <a [routerLink]="['/registro']">Regístrate</a>
+
+        </form>
+    </div>
+</div>

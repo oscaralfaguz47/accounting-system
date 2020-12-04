@@ -1,0 +1,97 @@
+<div class="globalContentForm">
+    <mat-card>
+        <mat-card-title class="table-title">Estado de Resultados</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+    </mat-card>
+    <br>
+    <mat-card>
+        <div>
+            <mat-radio-group [(ngModel)]="searchType" aria-labelledby="example-radio-group-label" class="example-radio-group">
+                <mat-radio-button class="example-radio-button" (click)="changeToPeriodSearch(formDirective)" [checked]="searchType == 'period'" [value]="'period'">
+                    Busqueda por periodo &nbsp;
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" (click)="changeToDatesSearch(formDirective)" [checked]="searchType == 'dates'" [value]="'dates'">
+                    Busqueda por fechas &nbsp;
+                </mat-radio-button>
+            </mat-radio-group>&nbsp;
+            <form [formGroup]="incomeStatementForm" #formDirective="ngForm" (ngSubmit)="onSubmit(formDirective)" id="incomeStatementForm">
+
+                <br>
+                <br>
+                <mat-form-field *ngIf="searchType == 'dates'">
+                    <mat-label>Desde</mat-label>
+                    <input [(ngModel)]="initialDate" name="initialDate" matInput #initialDateDP [matDatepicker]="picker1" formControlName="initialDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                    <mat-error>Selecciona una fecha</mat-error>
+                </mat-form-field> &nbsp;
+                <mat-form-field *ngIf="searchType == 'dates'">
+                    <mat-label>Hasta</mat-label>
+                    <input [(ngModel)]="finalDate" name="finalDate" matInput #finalDateDP [matDatepicker]="picker2" formControlName="finalDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                    <mat-error>Selecciona una fecha</mat-error>
+                    <mat-hint class="validation-error" *ngIf="finalDateMajor" align="begin">La fecha final no puede ser menor a la fecha inicial.</mat-hint>
+                </mat-form-field> &nbsp;
+
+                <mat-form-field *ngIf="searchType == 'period'">
+                    <mat-label>Mes</mat-label>
+                    <mat-select [(ngModel)]="month" name="month" formControlName="month">
+                        <mat-option *ngFor="let pMonth of months" [value]="pMonth.id">
+                            {{pMonth.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>Selecciona el mes</mat-error>
+                </mat-form-field>&nbsp;
+                <mat-form-field *ngIf="searchType == 'period'">
+                    <mat-label>Año</mat-label>
+                    <mat-select [(ngModel)]="year" name="year" formControlName="year">
+                        <mat-option *ngFor="let pYear of years" [value]="pYear.value">
+                            {{pYear.value}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>Selecciona el año</mat-error>
+                </mat-form-field> &nbsp; &nbsp;
+
+                <button class="btnCreate" type="submit" mat-button>Buscar</button> &nbsp;
+                <button (click)="downloadPdf()" matTooltip="Descargar en PDF" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
+            </form>
+
+        </div>
+
+        <div *ngIf="spinner" class="container spinner-container">
+            <hr>
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <br>
+        <hr>
+        <div id="pdf-container" *ngIf="displayTable" class="table-responsive statements-table">
+
+            <h4 class="">ESTADO DE RESULTADOS</h4>
+            <h5>{{companyName}}</h5>
+            <h6 *ngIf="searchType == 'dates'">{{subtitleDate}}</h6>
+            <h6 *ngIf="searchType == 'period'">{{subtitleDate}}</h6>
+
+            <table id="income-statement-table">
+                <br>
+                <tr *ngFor="let account of dataSource">
+                    <td class="td-first cell-border"><span>{{account.code}}</span></td>
+                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' || 
+                        account.name == 'Total Ingresos de Ventas' || account.name == 'Otros ingresos' || account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS'
+                        || account.name == 'GASTOS' || account.name == 'Gastos de ventas' || account.name == 'Total gastos de ventas' || account.name == 'Gastos administrativos'
+                        || account.name == 'Total gastos administrativos' || account.name == 'Gastos financieros' || account.name == 'Total gastos financieros' 
+                        || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}">{{account.name}}</span></td>
+                    <td class="cell-border"><span [ngClass]="{'total-amount':account.name == 'Total Ingresos de Ventas' ||
+                        account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS' || account.name == 'Total gastos de ventas'
+                        || account.name == 'Total gastos administrativos'|| account.name == 'Total gastos financieros'
+                        || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}" [hidden]="account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' 
+                       || account.name == 'Otros ingresos' || account.name == 'GASTOS' || account.name == 'Gastos de ventas' 
+                       || account.name == 'Gastos administrativos' || account.name == 'Gastos financieros'">{{account.amount | number}}</span></td>
+                </tr>
+            </table>
+        </div>
+        <br> <br><br><br>
+    </mat-card>
+</div>

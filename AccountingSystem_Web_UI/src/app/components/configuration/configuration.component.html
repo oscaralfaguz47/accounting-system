@@ -1,0 +1,73 @@
+<div class="globalContentForm">
+    <mat-card class="globalForm">
+        <mat-card-title>Configuración</mat-card-title>
+        <mat-card-subtitle>
+            <span *ngIf="labelCreateOpeningSeat">La empresa <strong>{{companyName}}</strong> no cuenta con un asiento de apertura.</span>
+            <br>
+            <span class="text-danger" *ngIf="labelCreateOpeningSeat">Por favor crea un nuevo asiento. </span>
+            <span *ngIf="labelExistsOpeningSeat">La empresa: <strong>{{companyName}}</strong> ya cuenta con un asiento de apertura.</span>
+            <br>
+            <span class="text-success" *ngIf="labelExistsOpeningSeat && !openingSeatBelongsToClosing">Puedes editar los valores existentes.</span>
+            <span class="text-danger" *ngIf="labelExistsOpeningSeat && openingSeatBelongsToClosing">No puedes editar los cambios, ya existe un cierre contable.</span>
+        </mat-card-subtitle>
+        <button class="btnCreate" *ngIf="labelCreateOpeningSeat" (click)="displayCreateSeatForm()" mat-button>Crear Asiento</button>
+    </mat-card>
+    <br>
+    <div *ngIf="spinner" class="container spinner-container">
+        <div class="spinner-border custom-spinner"></div>
+        <br>
+    </div>
+    <mat-card-content *ngIf="existsOpeningSeat">
+        <mat-card>
+            <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+            <br>
+            <mat-card-title class="table-title">Asiento de Apertura</mat-card-title>
+            <br>
+            <div class="table-responsive">
+                <form id="openingSeatForm" [formGroup]="openingSeatForm" (ngSubmit)="onSubmit()" novalidate class="example-form col">
+                    <mat-form-field style="width: 230px !important;">
+                        <mat-label>Periodo actual de contabilidad</mat-label>
+                        <input [(ngModel)]="date" name="initialDate" matInput [matDatepicker]="picker1" formControlName="date">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <mat-error>Selecciona el periodo del asiento</mat-error>
+                    </mat-form-field> &nbsp;
+                    <br>
+                    <br>
+
+                    <table>
+                        <tr class="cell-border">
+                            <th>Código</th>
+
+                            <th>Nombre Cuenta</th>
+
+                            <th>Monto</th>
+                        </tr>
+                        <tr class="cell-border" formArrayName="journalMovements" *ngFor="let account of openingSeatForm.get('journalMovements')['controls']; let i = index;">
+                            <td formGroupName="{{i}}">{{account.get('code').value}}</td>
+                            <td formGroupName="{{i}}">{{account.get('accountName').value}}</td>
+                            <td formGroupName="{{i}}">
+                                <mat-form-field class="example-full-width">
+                                    <input placeholder="" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" type="number" class="opening-seat-inputs" #accountAmount matInput maxlength="20" formControlName="totalAmount">
+                                    <mat-hint align="end">{{accountAmount.value.length}} / 20</mat-hint>
+                                </mat-form-field>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        </mat-card>
+    </mat-card-content>
+    <br>
+    <br>
+    <br>
+    <mat-card-actions *ngIf="existsOpeningSeat && !openingSeatBelongsToClosing" class="buttonsForms">
+        <div id="bebitsCredits-div">
+            <span class="row"><strong>Débitos: &nbsp; </strong> {{debitAmount | number}}</span>
+            <span class="row"><strong>Créditos: &nbsp; </strong>{{creditAmount | number}}</span>
+        </div>
+        <button class="btnCreate fixed-save-button" form="openingSeatForm" mat-button>Guardar Cambios</button>
+    </mat-card-actions>
+</div>

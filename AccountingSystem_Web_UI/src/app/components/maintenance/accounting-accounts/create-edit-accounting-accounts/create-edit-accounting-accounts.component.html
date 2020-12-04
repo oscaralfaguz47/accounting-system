@@ -1,0 +1,64 @@
+<mat-card class="create-form-container">
+    <mat-dialog-content>
+        <mat-card-header>
+            <mat-card-title>{{title}}</mat-card-title>
+        </mat-card-header>
+
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        <mat-card-content>
+            <mat-card class="mat-card-form-container">
+                <form id="accountsForm" [formGroup]="accountsForm" (ngSubmit)="onSubmit()" novalidate class="example-form col">
+
+                    <mat-form-field class="example-full-width form-inputs">
+                        <mat-label>Nombre Cuenta</mat-label>
+                        <input [(ngModel)]="data.accountName" name="accountName" [(ngModel)]="data.name" maxlength="50" #accountName matInput formControlName="accountName">
+                        <mat-hint align="end">{{accountName.value.length}} / 50</mat-hint>
+                        <mat-error>El nombre es requerido</mat-error>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field *ngIf="!disabled" class="form-inputs">
+                        <mat-label>Categoría</mat-label>
+                        <mat-select [disabled]="disabled" name="idAccountFirstCategory" formControlName="idAccountFirstCategory">
+                            <mat-option (click)="enableSubCategory(fcaccount.idAccountFirstCategory)" *ngFor="let fcaccount of firstCategoryAccounts" [value]="fcaccount.idAccountFirstCategory">
+                                {{fcaccount.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>La categoría es requerida</mat-error>
+                    </mat-form-field>
+                    <br *ngIf="!disabled">
+                    <mat-form-field *ngIf="!disabled" class="form-inputs">
+                        <mat-label>Sub Categoría</mat-label>
+                        <mat-select name="idAccountSecondCategory" [disabled]="secondCategoryDisabled == true" formControlName="idAccountSecondCategory">
+                            <mat-option *ngFor="let scaccount of secondCategoryAccounts" [value]="scaccount.idAccountSecondCategory">
+                                {{scaccount.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>La subcategoría es requerida</mat-error>
+                    </mat-form-field>
+                    <br *ngIf="!disabled">
+                    <mat-form-field *ngIf="!disabled" class="form-inputs">
+                        <mat-label>Afectación</mat-label>
+                        <mat-select [disabled]="disabled" name="idAccountAffectation" formControlName="idAccountAffectation">
+                            <mat-option *ngFor="let accountAffectation of accountAffectation" [value]="accountAffectation.idAccountAffectation">
+                                {{accountAffectation.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>La afectación es requerida</mat-error>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field class="example-full-width form-inputs">
+                        <mat-label>Descripción</mat-label>
+                        <input [(ngModel)]="data.description" name="description" maxlength="60" #accountDescription matInput formControlName="description">
+                        <mat-hint align="end">{{accountDescription.value.length}} / 60</mat-hint>
+                    </mat-form-field>
+                </form>
+                <br>
+            </mat-card>
+        </mat-card-content>
+
+    </mat-dialog-content>
+    <mat-card-actions class="buttonsForms">
+        <button (click)="closeDialog()" class="btnCancel" mat-button>Cancelar</button>
+        <button class="btnCreate" form="accountsForm" mat-button>Guardar</button>
+    </mat-card-actions>
+</mat-card>

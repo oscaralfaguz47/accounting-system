@@ -1,0 +1,87 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-card-title class="table-title">Cuentas Contables</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <div class="buttonsHeadersContainer">
+            <button class="btnCreate" (click)="createAccount()" mat-button>Agregar</button>
+        </div>
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div class="table-responsive">
+            <mat-form-field class="dropdown-export-files">
+                <mat-label>Exportar datos</mat-label>
+                <mat-select>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/excel-file.png" alt=""> &nbsp; Excel
+                    </mat-option>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
+                    </mat-option>
+                </mat-select>
+                <mat-error>La subcategoría es requerida</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+            <table mat-table [dataSource]="accountsDataSource" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="code">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Codigo </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.code}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accountName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accountAffectationName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Afectación </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountAffectationName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="firstCategoryName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Categoría </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.firstCategoryName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="secondCategoryName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Sub Categoría </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.secondCategoryName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Descripción </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.description}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+                            <a matTooltip="Editar">
+                                <mat-icon (click)="updateAccountingAccount(element)">edit</mat-icon>
+                            </a>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+            </table>
+            <div class="container" *ngIf="data.length == 0">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen cuentas registrados</p>
+            </div>
+        </div>
+
+
+    </mat-card>
+
+</div>

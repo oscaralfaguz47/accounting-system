@@ -1,0 +1,69 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-card-title class="table-title">Usuarios</mat-card-title>
+        <div class="buttonsHeadersContainer">
+            <button class="btnCreate" (click)="createUser()" mat-button>Agregar</button>
+        </div>
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div class="table-responsive">
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="firstName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Apellido </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="email">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Correo </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.email}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="roll">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Roll </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.roll}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> <span class="text-success" *ngIf="element.status">Activo</span> <span class="text-danger" *ngIf="!element.status">Inactivo</span> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+
+                            <mat-checkbox matTooltip="Activar/Desactivar" [(ngModel)]="element.status" (click)="changeUserStatus(element.idUser, element.status)" value="element.status"></mat-checkbox>
+
+                            <a matTooltip="Editar">
+                                <mat-icon (click)="updateUser(element)">edit</mat-icon>
+                            </a>
+
+                        </div>
+
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+
+
+    </mat-card>
+
+</div>

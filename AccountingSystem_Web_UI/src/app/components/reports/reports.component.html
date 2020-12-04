@@ -1,0 +1,9 @@
+<nav mat-tab-nav-bar class="movements-mat-tab">
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['estado-resultados']">
+        Estado de resultados
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['balance-situacion']">
+        Balance de Situación
+    </a>
+</nav>
+<router-outlet></router-outlet>

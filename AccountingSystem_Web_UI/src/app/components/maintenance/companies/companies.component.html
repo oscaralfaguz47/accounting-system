@@ -1,0 +1,64 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-card-title class="table-title">Empresas</mat-card-title>
+        <div class="buttonsHeadersContainer">
+            <button class="btnCreate" (click)="createCompany()" mat-button>Agregar</button>
+        </div>
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div class="table-responsive">
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyName}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="identification">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Identificación </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyIdentification}} </td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="email">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Correo </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyEmail}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="phone">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Teléfono </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyPhone}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+                            <a matTooltip="Eliminar">
+                                <mat-icon (click)="deleteCompany(element.idCompany)">delete</mat-icon>
+                            </a>
+                            <a matTooltip="Editar">
+                                <mat-icon (click)="updateCompany(element)">edit</mat-icon>
+                            </a>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+
+
+    </mat-card>
+
+</div>

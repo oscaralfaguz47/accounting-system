@@ -1,0 +1,209 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        <br>
+        <mat-card-title class="table-title">Ventas</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <mat-form-field *ngIf="!isCreatingSale" class="dropdown-export-files">
+            <mat-label>Exportar datos</mat-label>
+            <mat-select>
+                <mat-option (click)="exportExcelFile()" [value]="">
+                    <img class="img-export" src="assets/img/excel-file.png" alt=""> &nbsp; Excel
+                </mat-option>
+                <mat-option (click)="exportPdfFile()" [value]="">
+                    <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
+                </mat-option>
+            </mat-select>
+            <mat-error>La subcategoría es requerida</mat-error>
+        </mat-form-field>
+        <div class="buttonsHeadersContainer">
+            <button *ngIf="!isCreatingSale" class="btnCreate" (click)="displayCreateSale()" mat-button>Agregar</button>
+        </div>
+
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div *ngIf="!isCreatingSale" class="table-responsive">
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+
+            <table id="table-data" mat-table [dataSource]="salesDataSource" class="mat-elevation-z8">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="voucher">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> #Factura </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.voucher}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="customerName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Cliente </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.customerName}} </td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="accountName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Tipo Venta </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="date">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.registrationDate | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalAmount">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto Total </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.totalAmount | number}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="d151Name">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> D151 </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.d151Name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="movementTypeName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Condición </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.movementTypeName}} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null">
+                                <mat-icon (click)="deleteIncome(element.idIncome)">delete</mat-icon>
+
+                            </a>
+                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null" (click)="displayeEditPage(element)">
+                                <mat-icon>edit</mat-icon>
+                            </a>
+                            <a>
+                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null">error_outline</mat-icon>
+                            </a>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+
+            </table>
+
+
+            <div class="container" *ngIf="data.length == 0">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen ventas registradas</p>
+            </div>
+        </div>
+        <!--Create new sales-->
+        <div *ngIf="isCreatingSale">
+
+            <mat-card-title>{{title}}</mat-card-title>
+
+            <mat-card>
+                <form [formGroup]="salesForm" id="salesForm" (ngSubmit)="onSubmit()">
+                    <div>
+                        <mat-form-field>
+                            <mat-label>Fecha movimiento</mat-label>
+                            <input name="registrationDate" matInput [matDatepicker]="picker" [(ngModel)]="registrationDate" formControlName="registrationDate">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                            <mat-error>La fecha es requerida</mat-error>
+                        </mat-form-field> &nbsp;
+
+                        <mat-form-field (click)="validateExistsIncomesAccounts()">
+                            <mat-label>Tipo de ingreso</mat-label>
+                            <mat-select name="idAccountingAccount" formControlName="idAccountingAccount" [(ngModel)]="incomeType">
+                                <mat-option *ngFor="let incomeAccount of incomesAccountingAccounts" [value]="incomeAccount.idAccountingAccount">
+                                    {{incomeAccount.accountName}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>El tipo de ingreso es requerido</mat-error>
+                        </mat-form-field> &nbsp;
+                        <mat-form-field>
+                            <mat-label>D-151</mat-label>
+                            <mat-select name="idD151" formControlName="idD151" [(ngModel)]="d151Option">
+                                <mat-option *ngFor="let option of d151Options" [value]="option.idD151">
+                                    {{option.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>D-151 es requerido</mat-error>
+                        </mat-form-field> &nbsp;
+                    </div>
+                    <div>
+                        <p class="text-info"><strong>Detalles de la venta</strong></p>
+                        <div>
+                            <label id="example-radio-group-label">Condición de la venta</label> <br>
+                            <mat-radio-group [(ngModel)]="condition" aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="idMovementType">
+                                <mat-radio-button (click)="changeDebitAccountToCash()" class="example-radio-button" [checked]="condition == movementTypes[indexDebitMovementType]" [value]="movementTypes[0].idMovementType">
+                                    {{movementTypes[0].name}} &nbsp;
+                                </mat-radio-button>
+                                <mat-radio-button (click)="changeDebitAccountToCredit()" class="example-radio-button" [checked]="condition == movementTypes[indexCreditMovementType]" [value]="movementTypes[1].idMovementType">
+                                    {{movementTypes[1].name}} &nbsp;
+                                </mat-radio-button>
+                            </mat-radio-group>&nbsp;
+                            <mat-form-field>
+                                <mat-label>Cuenta a debitar</mat-label>
+                                <mat-select [disabled]="!enabledDebitAccount" name="debitAccount" formControlName="debitAccount" [(ngModel)]="debitAccountId">
+                                    <mat-option *ngFor="let option of allAccounts" [value]="option.idAccountingAccount">
+                                        {{option.accountName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field> &nbsp;
+                            <div id="change-debit-account-btn">
+                                <a (click)="enableDebitAccount()">Cambiar cuenta a debitar <span  matTooltip='Habilita la opción "Cuenta a debitar" para elegir otra opción' class="material-icons">
+                                    info
+                                    </span></a>
+                            </div>
+
+                        </div>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>#Factura</mat-label>
+                            <input [(ngModel)]="invoiceNumber" name="voucher" maxlength="50" #voucherSale matInput formControlName="voucher">
+                            <mat-hint align="end">{{voucherSale.value.length}} / 50</mat-hint>
+                        </mat-form-field>&nbsp;
+                        <mat-form-field (click)="validateExistsCustomers()">
+                            <mat-label>Cliente</mat-label>
+                            <mat-select [(ngModel)]="customerId" name="idCustomer" formControlName="idCustomer">
+                                <mat-option *ngFor="let customer of customersList" [value]="customer.idCustomer">
+                                    {{customer.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>El cliente es requerido</mat-error>
+                        </mat-form-field> &nbsp;
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Detalle Factura</mat-label>
+                            <input [(ngModel)]="invoiceDetail" name="details" maxlength="80" #invoiceDetails matInput formControlName="details">
+                            <mat-hint align="end">{{invoiceDetails.value.length}} / 80</mat-hint>
+                        </mat-form-field>&nbsp;
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Monto Total (iva incluido)</mat-label>
+                            <input oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" [(ngModel)]="invoiceAmount" name="totaAmount" placeholder="0.00" type="number" maxlength="20" #amount matInput formControlName="totaAmount">
+                            <mat-hint align="end">{{amount.value.length}} / 20</mat-hint>
+                            <mat-error>El monto es requerido</mat-error>
+                        </mat-form-field>&nbsp;
+                        <mat-form-field class="example-full-width">
+                            <mat-label>IVA</mat-label>
+                            <input oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" [(ngModel)]="invoiceIva" name="iva" placeholder="0.00" type="number" maxlength="20" #ivaAmount matInput formControlName="iva">
+                            <mat-hint align="end">{{ivaAmount.value.length}} / 20</mat-hint>
+                        </mat-form-field>&nbsp;
+                    </div>
+
+                </form>
+            </mat-card>
+            <mat-card-actions class="buttonsForms">
+                <button class="btnCreate fixed-cancel-button" (click)="cancelCreateIncome()" mat-button>Cancelar</button>
+                <button class="btnCreate fixed-save-button" form="salesForm" mat-button>Guardar</button>
+            </mat-card-actions>
+        </div>
+    </mat-card>
+
+</div>

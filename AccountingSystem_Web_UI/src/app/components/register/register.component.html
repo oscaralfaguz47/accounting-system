@@ -1,0 +1,43 @@
+<div id="user-background">
+    <div id="user-form" class="user-register-form">
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        <br>
+        <h2>Regístrate</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="example-form col">
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Nombre</mat-label>
+                <input name="firstName" matInput placeholder="Nombre" value="" formControlName="name">
+                <mat-error>El nombre es requerido</mat-error>
+            </mat-form-field>
+
+            <br>
+            <mat-form-field class="example-full-width">
+                <mat-label>Apellido</mat-label>
+                <input name="lastName" matInput placeholder="Apellido" value="" formControlName="lastName">
+                <mat-error>El apellido es requerido</mat-error>
+            </mat-form-field>
+
+            <br>
+            <mat-form-field class="example-full-width">
+                <mat-label>Correo</mat-label>
+                <input name="email" type="email" matInput placeholder="Email" value="" formControlName="email">
+                <mat-error *ngIf="registerForm.get('email').hasError('required')">El correo es requerido</mat-error>
+                <mat-error *ngIf="registerForm.get('email').hasError('email')">Ingresa un correo valido</mat-error>
+            </mat-form-field>
+
+            <br>
+            <mat-form-field class="example-full-width">
+                <mat-label>Contraseña</mat-label>
+                <input name="password" matInput placeholder="Contraseña" value="" formControlName="password">
+                <mat-error>La contraseña es requerida</mat-error>
+            </mat-form-field>
+            <br>
+            <button id="userBtn" type="submit" mat-button>Registrarse</button>
+        </form>
+        <br>
+        <span>¿Ya tienes una cuenta?</span>
+        <br>
+        <a [routerLink]="['/login']">Inicia Sesión</a>
+    </div>
+</div>

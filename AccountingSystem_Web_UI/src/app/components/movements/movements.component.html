@@ -1,0 +1,15 @@
+<nav mat-tab-nav-bar class="movements-mat-tab">
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['registro-ventas']">
+        Registro Ventas
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['registro-gastos']">
+        Registro Gastos
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['asientos-ajustes']">
+        Asientos Ajuste
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['cierre-mensual']">
+        Cierre Mensual
+    </a>
+</nav>
+<router-outlet></router-outlet>

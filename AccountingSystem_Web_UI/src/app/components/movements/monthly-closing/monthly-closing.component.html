@@ -1,0 +1,122 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        <br>
+        <mat-card-title class="table-title">Cierres Mensuales</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <div class="buttonsHeadersContainer">
+            <button *ngIf="!isCreating" class="btnCreate" (click)="displayCreate()" mat-button>Agregar</button>
+        </div>
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div *ngIf="!isCreating" class="table-responsive">
+            <mat-form-field class="dropdown-export-files">
+                <mat-label>Exportar datos</mat-label>
+                <mat-select>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/excel-file.png" alt=""> &nbsp; Excel
+                    </mat-option>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
+                    </mat-option>
+                </mat-select>
+                <mat-error>La subcategoría es requerida</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                <ng-container matColumnDef="month">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Mes del Cierre</th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{months[element.month-1].name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="year">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Año del cierre</th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.year}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="profitLoss">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Ganancia / Perdida</th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.profitOrLoss | number}} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="detail">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Detalle </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.details}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="date">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha de creación </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+                            <a matTooltip="Eliminar" (click)="deleteMonthlyClosing(element.idMonthlyClosing)">
+                                <mat-icon>delete</mat-icon>
+                            </a>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+            </table>
+            <div class="container" *ngIf="data.length == 0">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen cierres registrados</p>
+            </div>
+        </div>
+        <!--Create new Expenses-->
+        <div *ngIf="isCreating">
+
+            <mat-card-title> Crear nuevo cierre</mat-card-title>
+
+            <mat-card>
+                <form [formGroup]="form" id="form" (ngSubmit)="onSubmit()">
+                    <mat-form-field>
+                        <mat-label>Mes del cierre</mat-label>
+                        <mat-select [(ngModel)]="month" name="month" formControlName="month">
+                            <mat-option *ngFor="let pMonth of months" [value]="pMonth.id">
+                                {{pMonth.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>Selecciona el mes</mat-error>
+                    </mat-form-field>&nbsp;
+                    <mat-form-field>
+                        <mat-label>Año</mat-label>
+                        <mat-select [(ngModel)]="year" name="year" formControlName="year">
+                            <mat-option *ngFor="let pYear of years" [value]="pYear.value">
+                                {{pYear.value}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>Selecciona el año</mat-error>
+                    </mat-form-field> &nbsp;
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Detalle</mat-label>
+                        <input [(ngModel)]="detail" name="detail" maxlength="100" #closingDetail matInput formControlName="detail">
+                        <mat-hint align="end">{{closingDetail.value.length}} / 100</mat-hint>
+                        <mat-error>Ingresa un detalle</mat-error>
+                    </mat-form-field>&nbsp;
+
+                </form>
+            </mat-card>
+            <mat-card-actions class="buttonsForms">
+                <button class="btnCreate fixed-cancel-button" (click)="cancelCreate()" mat-button>Cancelar</button>
+                <button class="btnCreate fixed-save-button" form="form" mat-button>Guardar</button>
+            </mat-card-actions>
+        </div>
+    </mat-card>
+
+</div>

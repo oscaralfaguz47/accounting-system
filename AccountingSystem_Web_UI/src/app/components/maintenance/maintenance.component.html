@@ -1,0 +1,18 @@
+<nav mat-tab-nav-bar class="movements-mat-tab">
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['cuentas-contables']">
+        Cuentas Contables
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['clientes']">
+        Clientes
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['proveedores']">
+        Proveedores
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['empresas']">
+        Empresas
+    </a>
+    <a mat-tab-link [routerLinkActive]="['activeSubTab']" [routerLink]="['usuarios']">
+        Usuarios
+    </a>
+</nav>
+<router-outlet></router-outlet>

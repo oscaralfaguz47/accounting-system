@@ -1,0 +1,101 @@
+<div class="globalContentForm">
+    <mat-card>
+        <mat-card-title class="table-title">Balance de Situación</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+    </mat-card>
+    <br>
+    <mat-card>
+        <div>
+            <form [formGroup]="balanceSheetForm" (ngSubmit)="onSubmit()" id="balanceSheetForm">
+                <mat-radio-group [(ngModel)]="searchType" aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="searchType">
+                    <mat-radio-button class="example-radio-button" (click)="changeToPeriodSearch()" [checked]="searchType == 'period'" [value]="'period'">
+                        Busqueda por periodo &nbsp;
+                    </mat-radio-button>
+                    <mat-radio-button class="example-radio-button" (click)="changeToDatesSearch()" [checked]="searchType == 'dates'" [value]="'dates'">
+                        Busqueda por fechas &nbsp;
+                    </mat-radio-button>
+                </mat-radio-group>&nbsp;
+                <br>
+                <br>
+                <mat-icon *ngIf="searchType == 'dates'" matTooltip="Esta fecha corresponde a la misma del asiento de apertura">help &nbsp;</mat-icon>
+                <mat-form-field *ngIf="searchType == 'dates'">
+                    <mat-label>Desde</mat-label>
+                    <input readonly [(ngModel)]="initialDate" name="initialDate" matInput [matDatepicker]="picker1" formControlName="initialDate">
+                    <mat-datepicker-toggle [disabled]="searchType == 'dates'" matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field> &nbsp;
+
+                <mat-form-field *ngIf="searchType == 'dates'">
+                    <mat-label>Hasta</mat-label>
+                    <input [(ngModel)]="finalDate" name="finalDate" matInput [matDatepicker]="picker2" formControlName="finalDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                    <mat-hint class="validation-error" *ngIf="finalDateMajor" align="begin">La fecha final no puede ser menor a la fecha inicial.</mat-hint>
+                    <mat-error>Selecciona una fecha</mat-error>
+                </mat-form-field> &nbsp;
+
+                <mat-form-field *ngIf="searchType == 'period'">
+                    <mat-label>Mes</mat-label>
+                    <mat-select [(ngModel)]="month" name="month" formControlName="month">
+                        <mat-option *ngFor="let pMonth of months" [value]="pMonth.id">
+                            {{pMonth.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>Selecciona el mes</mat-error>
+                </mat-form-field>&nbsp;
+                <mat-form-field *ngIf="searchType == 'period'">
+                    <mat-label>Año</mat-label>
+                    <mat-select [(ngModel)]="year" name="year" formControlName="year">
+                        <mat-option *ngFor="let pYear of years" [value]="pYear.value">
+                            {{pYear.value}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>Selecciona el año</mat-error>
+                </mat-form-field> &nbsp; &nbsp;
+                <button class="btnCreate" type="submit" mat-button>Buscar</button> &nbsp;
+                <button matTooltip="Descargar en PDF" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
+            </form>
+        </div>
+
+        <div *ngIf="spinner" class="container spinner-container">
+            <hr>
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <br>
+
+        <div id="pdf-container" *ngIf="displayTable" class="table-responsive statements-table">
+            <hr>
+            <h4 class="">BALANCE DE SITUACIÓN</h4>
+            <h5>{{companyName}}</h5>
+            <h6 *ngIf="searchType == 'dates'">Del {{initialDate | date:'dd/MM/yyyy'}} al {{finalDate | date:'dd/MM/yyyy'}}</h6>
+            <h6 *ngIf="searchType == 'period'">Periodo {{monthName}} del {{year}}</h6>
+
+            <table id="income-statement-table">
+
+                <tr *ngFor="let account of dataSource">
+                    <td class="td-first cell-border"><span>{{account.code}}</span></td>
+                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
+                        || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
+                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO' 
+                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante' 
+                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos' 
+                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio' 
+                        || account.name == 'Total Pasivo y Patrimonio'}">{{account.name}}</span></td>
+                    <td class="cell-border"><span [ngClass]="{'total-amount': account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
+                        || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
+                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO' 
+                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante' 
+                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos' 
+                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio' 
+                        || account.name == 'Total Pasivo y Patrimonio'}" [hidden]="account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
+                        || account.name == 'Activo No Circulante'|| account.name == 'Otros Activos' || account.name == 'PASIVO' || account.name == 'Pasivo circulante' 
+                        || account.name == 'Pasivo No Circulante' || account.name == 'Otros Pasivos' 
+                        || account.name == 'PATRIMONIO'">{{account.amount | number}}</span></td>
+                </tr>
+            </table>
+        </div>
+        <br> <br><br><br>
+    </mat-card>
+</div>

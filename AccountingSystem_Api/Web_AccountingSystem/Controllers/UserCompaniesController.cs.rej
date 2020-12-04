@@ -1,0 +1,9 @@
+diff a/Web_AccountingSystem/Controllers/UserCompaniesController.cs b/Web_AccountingSystem/Controllers/UserCompaniesController.cs	(rejected hunks)
+@@ -74,6 +74,7 @@
+         [Authorize(Roles = "Administrador, Visitante")]
+         // GET: api/UserCompanies/SelectFirstCompany
+         [HttpGet("[action]")]
++        public async Task<IActionResult> SelectFirstCompany(SelectCompaniesViewModel model, int idUser)
+         {
+ 
+             var company = await _context.UserCompanies.Include(uc => uc.company)

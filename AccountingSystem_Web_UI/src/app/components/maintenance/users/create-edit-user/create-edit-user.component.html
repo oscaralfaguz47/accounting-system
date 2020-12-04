@@ -1,0 +1,66 @@
+<mat-card class="create-form-container">
+    <mat-dialog-content>
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+
+        <mat-card-header>
+            <mat-card-title>{{data.title}}</mat-card-title>
+        </mat-card-header>
+
+
+        <mat-card class="mat-card-form-container">
+            <form id="createUserForm" [formGroup]="UserForm" (ngSubmit)="onSubmit()" novalidate class="example-form col">
+                <mat-form-field class="example-full-width form-inputs">
+                    <mat-label>Nombre</mat-label>
+                    <input name="firstName" [(ngModel)]="data.firstName" maxlength="50" #userFirstName matInput formControlName="firstName">
+                    <mat-hint align="end">{{userFirstName.value.length}} / 50</mat-hint>
+                    <mat-error>El nombre es requerido</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="example-full-width form-inputs">
+                    <mat-label>Apellido</mat-label>
+                    <input name="lastName" [(ngModel)]="data.lastName" maxlength="50" #userLastName matInput formControlName="lastName">
+                    <mat-hint align="end">{{userLastName.value.length}} / 50</mat-hint>
+                    <mat-error>El apellido es requerido</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="example-full-width form-inputs">
+                    <mat-label>Correo</mat-label>
+                    <input type="email" name="email" [(ngModel)]="data.email" maxlength="80" #userEmail matInput formControlName="email">
+                    <mat-hint align="end">{{userEmail.value.length}} / 80</mat-hint>
+                    <mat-error *ngIf="UserForm.get('email').hasError('required')">El correo es requerido</mat-error>
+                    <mat-error *ngIf="UserForm.get('email').hasError('email')">Ingresa un correo valido</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="form-inputs">
+                    <mat-label>Rol</mat-label>
+                    <mat-select [(ngModel)]="data.idRoll" name="idRoll" formControlName="idRoll">
+                        <mat-option *ngFor="let roll of roles" [value]="roll.idRoll">
+                            {{roll.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>El rol es requerido</mat-error>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="example-full-width form-inputs">
+                    <mat-label>Ocupación</mat-label>
+                    <input name="ocupation" [(ngModel)]="data.ocupation" #userOcupation maxlength="50" matInput formControlName="ocupation">
+                    <mat-hint align="end">{{userOcupation.value.length}} / 50</mat-hint>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="example-full-width form-inputs">
+                    <mat-label>Contraseña</mat-label>
+                    <input name="password" #userPassword maxlength="50" matInput formControlName="password">
+                    <mat-hint align="end">{{userPassword.value.length}} / 50</mat-hint>
+                    <mat-error>La contraseña es requerida</mat-error>
+                </mat-form-field>
+            </form>
+        </mat-card>
+        <br>
+
+    </mat-dialog-content>
+
+    <mat-card-actions class="buttonsForms">
+        <button (click)="closeDialog()" class="btnCancel" mat-button>Cancelar</button>
+        <button class="btnCreate" form="createUserForm" mat-button>Guardar</button>
+    </mat-card-actions>
+</mat-card>

@@ -1,0 +1,54 @@
+<mat-form-field class="dropdown-export-files">
+    <mat-label>Exportar datos</mat-label>
+    <mat-select>
+        <mat-option [value]="">
+            <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+<mat-card>
+    <mat-card-title class="card-title">Detalles del asiento</mat-card-title>
+    <br>
+    <div>
+        <span><strong>Numero de asiento:</strong> {{seatElement.seatNumber}} </span> <br>
+        <span><strong>Origen:</strong> {{seatElement.originName}} </span> <br>
+        <span><strong>Fecha:</strong> {{seatElement.date | date:'dd/MM/yyyy'}} </span> <br>
+        <span><strong>Monto:</strong> {{seatElement.amount | number}} </span> <br>
+        <span><strong>Descripción:</strong> {{seatElement.description}} </span> <br>
+        <span><strong>Periodo del cierre mensual:</strong> {{monthlyClosing}} </span> <br>
+        <br>
+
+    </div>
+    <div class="table-responsive">
+        <div class="container">
+            <span class=" row justify-content-center"><strong>Movimiento de cuentas</strong></span>
+        </div>
+        <br>
+        <table mat-table [dataSource]="journalMovements" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="accountingAccount">
+                <th class="tableCells" mat-header-cell *matHeaderCellDef> Cuenta Contable </th>
+                <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountingAccountName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="accountAffectation">
+                <th class="tableCells" mat-header-cell *matHeaderCellDef> Afectación </th>
+                <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountAffectationName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalAmount">
+                <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto </th>
+                <td class="tableCells" mat-cell *matCellDef="let element"> {{element.totalAmount | number}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th class="tableCells" mat-header-cell *matHeaderCellDef> Descripción </th>
+                <td class="tableCells" mat-cell *matCellDef="let element"> {{element.description}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+        </table>
+    </div>
+</mat-card>
+<br><br><br>

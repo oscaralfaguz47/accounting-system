@@ -1,0 +1,229 @@
+<div class="globalContentForm">
+    <mat-card class="globalForm">
+        <mat-card-title class="table-title">Asientos de Ajuste</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <mat-card>
+            <button class="btnCreate" (click)="displaySeats()" mat-button>Ver Asientos</button> &nbsp;
+            <button class="btnCreate" (click)="displayCreateSeatPage()
+            " mat-button>Crear Asiento</button>
+        </mat-card>
+    </mat-card>
+    <br>
+
+    <!--JOURNAL SEATS TABLE-->
+    <mat-card class="table-container-mobile" *ngIf="viewSeats">
+        <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+        <br>
+        <mat-card-title class="card-title">Asientos existentes</mat-card-title>
+        <div *ngIf="spinner" class="container spinner-container">
+            <div class="spinner-border custom-spinner"></div>
+            <br>
+        </div>
+        <div class="table-responsive">
+            <mat-form-field class="dropdown-export-files">
+                <mat-label>Exportar datos</mat-label>
+                <mat-select>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/excel-file.png" alt=""> &nbsp; Excel
+                    </mat-option>
+                    <mat-option [value]="">
+                        <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
+                    </mat-option>
+                </mat-select>
+                <mat-error>La subcategoría es requerida</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Filtrar Datos</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
+            </mat-form-field>
+            <table mat-table [dataSource]="journalSeatsDataSource" class="mat-elevation-z8">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="seatNumber">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Número Asiento </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.seatNumber}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="origin">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Origen </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.originName}} </td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="date">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha movimiento </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.date | date:'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Descripción </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.description}} </td>
+                </ng-container>
+                <ng-container matColumnDef="amount">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.amount | number}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+                            <a matTooltip="Eliminar" (click)="deleteJournalSeat(element.idJournalSeat)" *ngIf="element.originName == 'Asientos de ajuste' && element.idMonthlyClosing == null">
+                                <mat-icon>delete</mat-icon>
+                            </a>
+                            <a matTooltip="Editar" (click)="getJournalMovements(element)" *ngIf="element.originName == 'Asientos de ajuste' && element.idMonthlyClosing == null">
+                                <mat-icon>edit</mat-icon>
+                            </a>
+                            <a matTooltip="Ver detalles" (click)="viewSeatDetails(element)" class="view-details-icon">
+                                <mat-icon>visibility</mat-icon>
+                            </a>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+            </table>
+        </div>
+    </mat-card>
+
+    <!--CREATE JOURNAL SEATS-->
+    <mat-card *ngIf="creatingSeat">
+        <mat-card-title>{{titleCreateEdit}}</mat-card-title>
+
+        <mat-card>
+            <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
+            <br>
+            <form [formGroup]="seatForm" id="seatForm" (ngSubmit)="onSubmit()">
+                <mat-form-field>
+                    <mat-label>Selecciona la fecha</mat-label>
+                    <input name="seatDate" matInput [matDatepicker]="picker" [(ngModel)]="seatDate" formControlName="seatDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error>La fecha es requerida</mat-error>
+                </mat-form-field>
+                &nbsp;
+                <mat-form-field class="example-full-width">
+                    <mat-label>Descripción del asiento</mat-label>
+                    <input name="seatDescription" matInput placeholder="Descripción" [(ngModel)]="seatDescription" formControlName="seatDescription">
+                    <mat-error>La descripción es requerida</mat-error>
+                </mat-form-field>
+            </form>
+            <hr>
+
+            <span class="text-success"><strong>Agrega Movimientos</strong></span>
+            <br><br> &nbsp;
+            <form [formGroup]="movementsForm" id="movementsForm" #formDirective="ngForm" (ngSubmit)="addTableRow(movementsForm, formDirective)" novalidate>
+                <mat-form-field>
+                    <mat-label>Cuenta contable</mat-label>
+                    <mat-select name="idAccountingAccount" [(ngModel)]="accountId" formControlName="accountId">
+                        <mat-option *ngFor="let account of accountingAccounts" [value]="account.idAccountingAccount">
+                            {{account.accountName}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>La cuenta es requerida</mat-error>
+                </mat-form-field>
+                &nbsp;
+                <mat-form-field>
+                    <mat-label>Afectación</mat-label>
+                    <mat-select name="idAccountAffectation" [(ngModel)]="accountAffectationId" formControlName="accountAffectationId">
+                        <mat-option *ngFor="let accountAffectation of accountAffectation" [value]="accountAffectation.idAccountAffectation">
+                            {{accountAffectation.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>La afectación es requerida</mat-error>
+                </mat-form-field>
+                &nbsp;
+                <mat-form-field class="example-full-width">
+                    <mat-label>Monto</mat-label>
+                    <input oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" name="movementAmount" placeholder="0.00" [type]="'number'" class="opening-seat-inputs" formControlName="movementAmount" #amount matInput
+                        maxlength="20" [(ngModel)]="movementAmount">
+                    <mat-hint align="end">{{amount.value.length}} / 20</mat-hint>
+                    <mat-error>El monto es requerido</mat-error>
+                </mat-form-field>
+                &nbsp;
+                <mat-form-field class="example-full-width">
+                    <mat-label>Detalle</mat-label>
+                    <input name="movementDescription" matInput placeholder="Descripción" [(ngModel)]="movementDescription" formControlName="movementDescription">
+                </mat-form-field>
+            </form>
+            <div class="buttonsHeadersContainer">
+                <button style="margin-right: 30px;" class="btnCreate" mat-button form="movementsForm">Agregar movimiento</button>
+            </div>
+            <hr>
+
+        </mat-card>
+        <br>
+
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cuenta</th>
+
+                        <th>Afectación</th>
+
+                        <th>Monto</th>
+
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of tableRows">
+                        <td>
+                            <span>{{row.account}}</span>
+                        </td>
+                        <td>
+                            <span>{{row.affectation}}</span>
+                        </td>
+                        <td>
+                            <span>{{row.amount | number}}</span>
+                        </td>
+                        <td>
+                            <span>{{row.description}}</span>
+                        </td>
+
+                        <td class="tableCells">
+                            <div class="cell-icons">
+                                <a (click)="deleteTableRow(tableRows.indexOf(row))">
+                                    <mat-icon>delete</mat-icon>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="container" *ngIf="tableRows.length == 0">
+                <br>
+                <p class="row justify-content-center text-danger">No existen movimientos</p>
+            </div>
+
+        </div>
+        <br>
+        <br>
+        <br>
+
+        <mat-card-actions *ngIf="creatingSeat" class="buttonsForms">
+            <div id="bebitsCredits-div">
+                <span class="row"><strong>Débitos: &nbsp; </strong> {{debitAmount | number}}</span>
+                <span class="row"><strong>Créditos: &nbsp; </strong>{{creditAmount | number}}</span>
+            </div>
+            <button style="margin-right: 100px;" class="btnCreate fixed-save-button" (click)="displaySeats()" mat-button>Cancelar</button> &nbsp;
+            <button class="btnCreate fixed-save-button" form="seatForm" mat-button>Guardar</button>
+        </mat-card-actions>
+    </mat-card>
+
+    <!-- VIEW SEAT DETAILS-->
+    <app-seat-details [seatElement]="seatElement" *ngIf="viewDetails"></app-seat-details>
+
+</div>
