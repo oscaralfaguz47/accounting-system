@@ -61,7 +61,7 @@ export class AdjustingEntriesComponent implements OnInit {
     private journalMovementsService: JournalMovementsService,
     private accountAffectationsService: AccountAffectationsService,
     private accountingAccountsService: AccountingAccoutsService) {
-    
+
 
 
   }
@@ -202,7 +202,7 @@ export class AdjustingEntriesComponent implements OnInit {
       this.detectChanges();
       this.movementsForm.reset();
       formDirective.resetForm();
-      
+
     }
   }
 
@@ -319,7 +319,7 @@ export class AdjustingEntriesComponent implements OnInit {
     };
     console.log(this.seat);
     this.journalSeatsService.updateJournalSeat(this.seat).subscribe((response) => {
-      console.log(this.seat);
+      this.getJournalSeats();
       this.progressBar = false;
       this.openSnackBar('¡Asiento Actualizado!');
       this.creatingSeat = false;

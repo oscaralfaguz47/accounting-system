@@ -123,6 +123,8 @@ export class SalesRecordComponent implements OnInit {
     this.invoiceDetail = null;
     this.invoiceAmount = null;
     this.invoiceIva = null;
+    this.firstJournalMovement = {};
+    this.secondJournalMovement = {};
     this.selectAllAccounts();
     this.salesFormGroup();
   }
@@ -339,6 +341,7 @@ export class SalesRecordComponent implements OnInit {
     this.progressBar = true;
     this.generateDataToSend();
     this.isCreatingSale = false;
+      this.isEditingSale = false;
     this.incomesService.editSale(this.dataToSend).subscribe((response) => {
       this.inicialize();
       this.getIncomes();
