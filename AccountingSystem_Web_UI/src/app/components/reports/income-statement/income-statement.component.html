@@ -71,23 +71,23 @@
 
             <h4 class="">ESTADO DE RESULTADOS</h4>
             <h5>{{companyName}}</h5>
-            <h6 *ngIf="searchType == 'dates'">{{subtitleDate}}</h6>
-            <h6 *ngIf="searchType == 'period'">{{subtitleDate}}</h6>
+            <h6 id="report-title" *ngIf="searchType == 'dates'">{{subtitleDate}}</h6>
+            <h6 id="report-title" *ngIf="searchType == 'period'">{{subtitleDate}}</h6>
 
             <table id="income-statement-table">
                 <br>
                 <tr *ngFor="let account of dataSource">
                     <td class="td-first cell-border"><span>{{account.code}}</span></td>
-                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' || 
+                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' ||
                         account.name == 'Total Ingresos de Ventas' || account.name == 'Otros ingresos' || account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS'
                         || account.name == 'GASTOS' || account.name == 'Gastos de ventas' || account.name == 'Total gastos de ventas' || account.name == 'Gastos administrativos'
-                        || account.name == 'Total gastos administrativos' || account.name == 'Gastos financieros' || account.name == 'Total gastos financieros' 
+                        || account.name == 'Total gastos administrativos' || account.name == 'Gastos financieros' || account.name == 'Total gastos financieros'
                         || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}">{{account.name}}</span></td>
                     <td class="cell-border"><span [ngClass]="{'total-amount':account.name == 'Total Ingresos de Ventas' ||
                         account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS' || account.name == 'Total gastos de ventas'
                         || account.name == 'Total gastos administrativos'|| account.name == 'Total gastos financieros'
-                        || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}" [hidden]="account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' 
-                       || account.name == 'Otros ingresos' || account.name == 'GASTOS' || account.name == 'Gastos de ventas' 
+                        || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}" [hidden]="account.name == 'INGRESOS' || account.name == 'Ingresos de ventas'
+                       || account.name == 'Otros ingresos' || account.name == 'GASTOS' || account.name == 'Gastos de ventas'
                        || account.name == 'Gastos administrativos' || account.name == 'Gastos financieros'">{{account.amount | number}}</span></td>
                 </tr>
             </table>
