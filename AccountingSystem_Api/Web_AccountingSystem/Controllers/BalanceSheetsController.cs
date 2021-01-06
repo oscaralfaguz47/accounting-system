@@ -667,14 +667,14 @@ namespace Web_AccountingSystem.Controllers
                                 if (searchType == "period")
                                 {
                                     int daysInMonth = System.DateTime.DaysInMonth(year, month);
-                                    initialMonthDate = DateTime.Parse("" + month + "/" + "01/" + year + " 12:00:00 am");
+                                    initialMonthDate = DateTime.Parse("" + month + "/" + "01/" + year + " 12:00:00 pm");
                                     finalMonthDate = DateTime.Parse("" +month + "/"+daysInMonth+"/" + year + " 11:59:59 pm");
                                     journalMovement = await _context.JournalMovements.Include(j => j.AccountAffectation).Where(j => j.IdAccountingAccount == accountExpense.IdAccountingAccount
                                 && j.Date >= initialMonthDate && j.Date <= finalMonthDate && j.IdCompany == idCompany && j.Status == true).ToListAsync();
                                 }
                                 else
                                 {
-                                    initialMonthDate = DateTime.Parse("" + finalDate.Month + "/01/" + finalDate.Year + " 12:00:00 am");
+                                    initialMonthDate = DateTime.Parse("" + finalDate.Month + "/01/" + finalDate.Year + " 12:00:00 pm");
                                     journalMovement = await _context.JournalMovements.Include(j => j.AccountAffectation).Where(j => j.IdAccountingAccount == accountExpense.IdAccountingAccount
                              && j.Date >= initialMonthDate && j.Date <= finalDate && j.IdCompany == idCompany && j.Status == true).ToListAsync();
                                 }

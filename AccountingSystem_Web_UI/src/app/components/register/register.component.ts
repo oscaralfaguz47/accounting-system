@@ -44,8 +44,8 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      userEmail: ['', [Validators.required, Validators.email]],
+      userPassword: ['', Validators.required]
     });
 
     this.rolesServices.getRoles().subscribe((res: any) => {
@@ -62,14 +62,14 @@ export class RegisterComponent implements OnInit {
         idRoll: this.idRoll,
         firstName: this.registerForm.value.name,
         lastName: this.registerForm.value.lastName,
-        email: this.registerForm.value.email,
+        email: this.registerForm.value.userEmail,
         ocupation: '',
-        password: this.registerForm.value.password
+        password: this.registerForm.value.userPassword
 
       };
       this.credentials = {
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password
+        email: this.registerForm.value.userEmail,
+        password: this.registerForm.value.userPassword
       };
       this.userService.register(this.dataToSend).subscribe((response: User) => {
         console.log(response);

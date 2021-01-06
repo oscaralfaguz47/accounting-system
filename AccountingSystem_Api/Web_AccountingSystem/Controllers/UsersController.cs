@@ -18,7 +18,6 @@ using Entities_AccountingSystem.UserCompanies;
 
 namespace Web_AccountingSystem.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

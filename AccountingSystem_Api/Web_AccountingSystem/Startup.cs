@@ -34,7 +34,7 @@ namespace Web_AccountingSystem
             services.AddDbContext<DbContextApi>(options => options.UseSqlServer(Configuration.GetConnectionString("SysConnection")));
             services.AddCors(options => {
                 options.AddPolicy("Todos",
-                builder => builder.WithOrigins("http://oscaralfaro47-001-site8.itempurl.com").WithHeaders("*").WithMethods("*"));
+                builder => builder.WithOrigins("*").WithHeaders("*").WithMethods("*"));
             });
 
             //Authentication

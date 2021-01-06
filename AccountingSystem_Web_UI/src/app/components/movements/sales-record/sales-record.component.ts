@@ -103,7 +103,7 @@ export class SalesRecordComponent implements OnInit {
     this.salesDataSource.filter = filterValue.trim().toLowerCase();
     console.log(this.salesDataSource.filteredData);
   }
-  exportExcelFile(): void {  
+  exportExcelFile(): void {
     this.dataGlobaService.exportToExcel(this.salesDataSource.filteredData, 'Ventas');
   }
   exportPdfFile(): void {
