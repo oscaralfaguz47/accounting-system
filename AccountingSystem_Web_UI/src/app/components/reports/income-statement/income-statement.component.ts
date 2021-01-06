@@ -121,7 +121,8 @@ export class IncomeStatementComponent implements OnInit {
 
   downloadPdf() {
     if (this.displayTable) {
-      const printer = new PrintPdf('Estado Resultados.pdf', 'pdf-container');
+      let from = document.getElementById('report-title').textContent;
+      const printer = new PrintPdf('Estado Resultados '+ from +'.pdf', 'pdf-container');
       printer.downloadPDF();
     } else {
       this.openSnackBar('No existen datos para descargar');

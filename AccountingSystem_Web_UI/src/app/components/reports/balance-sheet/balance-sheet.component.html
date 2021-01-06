@@ -54,7 +54,7 @@
                     <mat-error>Selecciona el año</mat-error>
                 </mat-form-field> &nbsp; &nbsp;
                 <button class="btnCreate" type="submit" mat-button>Buscar</button> &nbsp;
-                <button matTooltip="Descargar en PDF" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
+                <button matTooltip="Descargar en PDF" (click)="downloadPdf()" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
             </form>
         </div>
 
@@ -69,29 +69,29 @@
             <hr>
             <h4 class="">BALANCE DE SITUACIÓN</h4>
             <h5>{{companyName}}</h5>
-            <h6 *ngIf="searchType == 'dates'">Del {{initialDate | date:'dd/MM/yyyy'}} al {{finalDate | date:'dd/MM/yyyy'}}</h6>
-            <h6 *ngIf="searchType == 'period'">Periodo {{monthName}} del {{year}}</h6>
+            <h6 id="report-title" *ngIf="searchType == 'dates'">Del {{initialDate | date:'dd/MM/yyyy'}} al {{finalDate | date:'dd/MM/yyyy'}}</h6>
+            <h6 id="report-title" *ngIf="searchType == 'period'">Periodo {{monthName}} del {{year}}</h6>
 
             <table id="income-statement-table">
 
                 <tr *ngFor="let account of dataSource">
                     <td class="td-first cell-border"><span>{{account.code}}</span></td>
-                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
+                    <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'ACTIVO' || account.name == 'Activo Circulante'
                         || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
-                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO' 
-                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante' 
-                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos' 
-                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio' 
+                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO'
+                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante'
+                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos'
+                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio'
                         || account.name == 'Total Pasivo y Patrimonio'}">{{account.name}}</span></td>
-                    <td class="cell-border"><span [ngClass]="{'total-amount': account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
+                    <td class="cell-border"><span [ngClass]="{'total-amount': account.name == 'ACTIVO' || account.name == 'Activo Circulante'
                         || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
-                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO' 
-                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante' 
-                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos' 
-                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio' 
-                        || account.name == 'Total Pasivo y Patrimonio'}" [hidden]="account.name == 'ACTIVO' || account.name == 'Activo Circulante' 
-                        || account.name == 'Activo No Circulante'|| account.name == 'Otros Activos' || account.name == 'PASIVO' || account.name == 'Pasivo circulante' 
-                        || account.name == 'Pasivo No Circulante' || account.name == 'Otros Pasivos' 
+                        || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO'
+                        || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante'
+                        || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos'
+                        || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio'
+                        || account.name == 'Total Pasivo y Patrimonio'}" [hidden]="account.name == 'ACTIVO' || account.name == 'Activo Circulante'
+                        || account.name == 'Activo No Circulante'|| account.name == 'Otros Activos' || account.name == 'PASIVO' || account.name == 'Pasivo circulante'
+                        || account.name == 'Pasivo No Circulante' || account.name == 'Otros Pasivos'
                         || account.name == 'PATRIMONIO'">{{account.amount | number}}</span></td>
                 </tr>
             </table>

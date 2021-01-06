@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BalanceSheetService } from '../../../services/balance-sheet.service';
 import { YearsMonthsService } from 'src/app/services/years-months.service';
 import { JournalSeatsService } from '../../../services/journal-seats.service';
+import { PrintPdf } from '../../models/print';
+import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-balance-sheet',
@@ -29,7 +32,7 @@ export class BalanceSheetComponent implements OnInit {
   public finalDateMajor: boolean = false;
   public monthName;
 
-  constructor(private journalSeatsService: JournalSeatsService, private yearsMothsService: YearsMonthsService, private formBuilder: FormBuilder, private balanceSheetService: BalanceSheetService) {
+  constructor(private snackBar: MatSnackBar, private yearsMothsService: YearsMonthsService, private formBuilder: FormBuilder, private balanceSheetService: BalanceSheetService) {
     this.openingSeat = JSON.parse(localStorage.getItem('opseat'));
     this.initialDate = this.openingSeat[0].date;
   }
@@ -98,6 +101,21 @@ export class BalanceSheetComponent implements OnInit {
       }
     }
 
+  }
+
+  downloadPdf() {
+    if (this.displayTable) {
+      let from = document.getElementById('report-title').textContent;
+      const printer = new PrintPdf('Balance de Situación '+ from +'.pdf', 'pdf-container');
+      printer.downloadPDF();
+    } else {
+      this.openSnackBar('No existen datos para descargar');
+    }
+  }
+  openSnackBar(message) {
+    this.snackBar.openFromComponent(SnackBarSavedChangesComponent, {
+      data: { message: message }, duration: 2000,
+    });
   }
 
 }
