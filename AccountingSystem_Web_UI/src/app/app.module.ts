@@ -144,7 +144,6 @@ export class AppDateAdapter extends NativeDateAdapter {
   ],
   providers: [
     ROUTINGPROVIDERS,
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
     { provide: DateAdapter, useClass: AppDateAdapter },
    // { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
