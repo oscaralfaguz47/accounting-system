@@ -9,10 +9,7 @@
         <div class="buttonsHeadersContainer">
             <button *ngIf="!isCreating" class="btnCreate" (click)="displayCreate()" mat-button>Agregar</button>
         </div>
-        <div *ngIf="spinner" class="container spinner-container">
-            <div class="spinner-border custom-spinner"></div>
-            <br>
-        </div>
+
         <div *ngIf="!isCreating" class="table-responsive">
             <mat-form-field class="dropdown-export-files">
                 <mat-label>Exportar datos</mat-label>
@@ -72,12 +69,18 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
-            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-            <div class="container" *ngIf="data.length == 0">
+            <div *ngIf="spinner" class="container spinner-container">
+                <div class="spinner-border custom-spinner"></div>
+                <p>Cargando...</p>
                 <br>
-                <br>
-                <p class="row justify-content-center text-danger">No existen cierres registrados</p>
             </div>
+            <div class="container" *ngIf="data.length == 0 && !spinner">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen registros</p>
+            </div>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
         </div>
         <!--Create new Expenses-->
         <div *ngIf="isCreating">

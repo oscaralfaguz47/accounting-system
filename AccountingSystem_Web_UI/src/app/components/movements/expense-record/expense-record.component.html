@@ -21,10 +21,7 @@
         <div class="buttonsHeadersContainer">
             <button *ngIf="!isCreatingExpense" class="btnCreate" (click)="displayCreateExpense()" mat-button>Agregar</button>
         </div>
-        <div *ngIf="spinner" class="container spinner-container">
-            <div class="spinner-border custom-spinner"></div>
-            <br>
-        </div>
+
         <div *ngIf="!isCreatingExpense" class="table-responsive">
             <mat-form-field>
                 <mat-label>Filtrar Datos</mat-label>
@@ -97,13 +94,19 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
+            <div *ngIf="spinner" class="container spinner-container">
+                <div class="spinner-border custom-spinner"></div>
+                <p>Cargando...</p>
+                <br>
+            </div>
+            <div class="container" *ngIf="data.length == 0 && !spinner">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen registros</p>
+            </div>
             <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 
-            <div class="container" *ngIf="data.length == 0">
-                <br>
-                <br>
-                <p class="row justify-content-center text-danger">No existen gastos registrados</p>
-            </div>
+
         </div>
         <!--Create new Expenses-->
         <div *ngIf="isCreatingExpense">

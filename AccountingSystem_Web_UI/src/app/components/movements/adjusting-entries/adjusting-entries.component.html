@@ -16,10 +16,7 @@
         <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
         <br>
         <mat-card-title class="card-title">Asientos existentes</mat-card-title>
-        <div *ngIf="spinner" class="container spinner-container">
-            <div class="spinner-border custom-spinner"></div>
-            <br>
-        </div>
+
         <div class="table-responsive">
             <mat-form-field class="dropdown-export-files">
                 <mat-label>Exportar datos</mat-label>
@@ -86,6 +83,11 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
+            <div *ngIf="spinner" class="container spinner-container">
+                <div class="spinner-border custom-spinner"></div>
+                <p>Cargando...</p>
+                <br>
+            </div>
             <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
     </mat-card>
