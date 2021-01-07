@@ -4,6 +4,8 @@ export let GLOBAL = {
    // url: 'http://apiaccountingsystem.developingmymind.com/api/'
    // DEMO
     url: 'http://demo.apiaccountingsystem.oceansconsulting.net/api/'
+
+    // just test pagination feature branch
 }
 
 
