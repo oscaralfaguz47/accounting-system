@@ -71,11 +71,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
-            <div *ngIf="spinner" class="container spinner-container">
-                <div class="spinner-border custom-spinner"></div>
-                <p>Cargando...</p>
-                <br>
-            </div>
+            <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
             <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
     </mat-card>

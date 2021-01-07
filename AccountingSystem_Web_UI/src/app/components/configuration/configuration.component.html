@@ -13,11 +13,7 @@
         <button class="btnCreate" *ngIf="labelCreateOpeningSeat" (click)="displayCreateSeatForm()" mat-button>Crear Asiento</button>
     </mat-card>
     <br>
-    <div *ngIf="spinner" class="container spinner-container">
-        <div class="spinner-border custom-spinner"></div>
-        <p>Cargando...</p>
-        <br>
-    </div>
+    <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
     <mat-card-content *ngIf="existsOpeningSeat">
         <mat-card>
             <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>

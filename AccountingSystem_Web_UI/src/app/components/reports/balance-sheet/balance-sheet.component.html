@@ -58,11 +58,7 @@
             </form>
         </div>
 
-        <div *ngIf="spinner" class="container spinner-container">
-            <div class="spinner-border custom-spinner"></div>
-            <p>Cargando...</p>
-            <br>
-        </div>
+        <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
         <br>
 
         <div id="pdf-container" *ngIf="displayTable" class="table-responsive statements-table">
