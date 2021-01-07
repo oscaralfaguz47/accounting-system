@@ -3,7 +3,8 @@ export let GLOBAL = {
     // PRODUCTION
    // url: 'http://apiaccountingsystem.developingmymind.com/api/'
    // DEMO
-     url: 'http://demo.apiaccountingsystem.oceansconsulting.net/api/'
+    url: 'http://demo.apiaccountingsystem.oceansconsulting.net/api/'
+
 }
 
 
