@@ -18,18 +18,6 @@
         <mat-card-title class="card-title">Asientos existentes</mat-card-title>
 
         <div class="table-responsive">
-            <mat-form-field class="dropdown-export-files">
-                <mat-label>Exportar datos</mat-label>
-                <mat-select>
-                    <mat-option [value]="">
-                        <img class="img-export" src="assets/img/excel-file.png" alt=""> &nbsp; Excel
-                    </mat-option>
-                    <mat-option [value]="">
-                        <img class="img-export" src="assets/img/pdf-file.jpg" alt=""> &nbsp; PDF
-                    </mat-option>
-                </mat-select>
-                <mat-error>La subcategoría es requerida</mat-error>
-            </mat-form-field>
             <mat-form-field>
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
