@@ -76,7 +76,7 @@ export class ExpenseRecordComponent implements OnInit {
     private expensesService: ExpensesService, public dialog: MatDialog, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    
+
     this.expensesFormGroup();
     this.idCompany = localStorage.getItem('idCompany');
     this.companyName = localStorage.getItem('companyName');
@@ -324,6 +324,7 @@ export class ExpenseRecordComponent implements OnInit {
     this.progressBar = true;
     this.generateDataToSend();
     this.isCreatingExpense = false;
+      this.isEditingExpense = false;
     this.expensesService.editExpense(this.dataToSend).subscribe((response) => {
       this.inicialize();
       this.getExpenses();

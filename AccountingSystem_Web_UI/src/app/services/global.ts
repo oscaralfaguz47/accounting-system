@@ -5,7 +5,6 @@ export let GLOBAL = {
    // DEMO
     url: 'http://demo.apiaccountingsystem.oceansconsulting.net/api/'
 
-
 }
 
 
