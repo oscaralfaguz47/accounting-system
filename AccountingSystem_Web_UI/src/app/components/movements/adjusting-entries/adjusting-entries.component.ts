@@ -178,9 +178,9 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
     });
   }
   displaySeats() {
+    this.viewSeats = true;
     this.inicializePage();
     this.viewDetails = false;
-    this.viewSeats = true;
     this.creatingSeat = false;
     this.spinner = false;
   }
