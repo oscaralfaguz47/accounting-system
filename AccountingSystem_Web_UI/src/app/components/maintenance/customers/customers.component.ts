@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { CustomerService } from '../../../services/customers.service';
 import { CreateEditCustomerComponent } from './create-edit-customer/create-edit-customer.component';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { Overlay } from '@angular/cdk/overlay';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 
 @Component({
@@ -12,10 +14,24 @@ import { Overlay } from '@angular/cdk/overlay';
   templateUrl: './customers.component.html',
   styles: []
 })
-export class CustomersComponent implements OnInit {
+export class CustomersComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['name', 'identification', 'email', 'telephone', 'icons'];
   customersDataSource: any = [];
+
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.customersDataSource){
+      this.customersDataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.customersDataSource){
+      this.customersDataSource.sort = value;
+    }
+  }
+
   public idCompany;
   public companyName;
   public parameters = {};
@@ -29,6 +45,10 @@ export class CustomersComponent implements OnInit {
     this.idCompany = localStorage.getItem('idCompany');
     this.getCustomers();
    }
+   ngAfterViewInit() {
+    this.customersDataSource.paginator = this.paginator;
+    this.customersDataSource.sort = this.sort;
+  }
 
   ngOnInit() {
   }

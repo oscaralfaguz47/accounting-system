@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { CompaniesService } from '../../../services/companies.service';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import { CreateCompanyComponent } from './create-company/create-company.component';
@@ -6,6 +6,8 @@ import { ConfirmationMessageComponent } from '../../shared/confirmation-message/
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { UserService } from '../../../services/user.service';
 import { Overlay } from '@angular/cdk/overlay';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 export interface PeriodicElement {
   id: number;
@@ -20,9 +22,21 @@ export interface PeriodicElement {
   templateUrl: './companies.component.html',
   providers: [CompaniesService]
 })
-export class CompaniesComponent implements OnInit {
+export class CompaniesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['name', 'identification', 'email', 'phone', 'icons'];
   dataSource: any = [];
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.dataSource){
+      this.dataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.dataSource){
+      this.dataSource.sort = value;
+    }
+  }
   public iduser;
   public parameters = {};
   public token;
@@ -37,6 +51,10 @@ export class CompaniesComponent implements OnInit {
               private companiesService: CompaniesService, public dialog: MatDialog, private snackBar: MatSnackBar) {
     this.iduser = JSON.parse(localStorage.getItem('identity')).IdUser;
     this.token = localStorage.getItem('token');
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   ngOnInit() {

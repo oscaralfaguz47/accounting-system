@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { ExpensesService } from '../../../services/expenses.service';
 import { D151Service } from 'src/app/services/d151.service';
 import { ProvidersService } from '../../../services/providers.service';
@@ -12,6 +12,8 @@ import { ConfirmationMessageComponent } from '../../shared/confirmation-message/
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { AlertMessageComponent } from '../../shared/alert-message/alert-message.component';
 import { Router } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -21,12 +23,25 @@ import { Router } from '@angular/router';
   providers: [ExpensesService, D151Service, ProvidersService, MovementTypesService, AccountingAccoutsService,
     AccountAffectationsService, JournalMovementsService]
 })
-export class ExpenseRecordComponent implements OnInit {
+export class ExpenseRecordComponent implements OnInit, AfterViewInit {
 
-
+  //Table
   displayedColumns: string[] = ['voucher', 'providerName', 'accountName', 'date', 'totalAmount', 'details', 'd151Name', 'movementTypeName', 'icons'];
   expensesDataSource: any = [];
   public data = [];
+
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.expensesDataSource){
+      this.expensesDataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.expensesDataSource){
+      this.expensesDataSource.sort = value;
+    }
+  }
   public title: string;
   public idCompany;
   public progressBar: boolean = false;
@@ -75,6 +90,10 @@ export class ExpenseRecordComponent implements OnInit {
     private d151Service: D151Service, private accountingAccountsService: AccountingAccoutsService,
     private expensesService: ExpensesService, public dialog: MatDialog, private formBuilder: FormBuilder) { }
 
+    ngAfterViewInit() {
+      this.expensesDataSource.paginator = this.paginator;
+      this.expensesDataSource.sort = this.sort;
+    }
   ngOnInit() {
 
     this.expensesFormGroup();
@@ -84,13 +103,19 @@ export class ExpenseRecordComponent implements OnInit {
     this.invoiceNumber = '';
     this.invoiceDetail = '';
     this.getExpenses();
-
     this.selectMovementTypes();
     this.selectAllAccounts();
     this.selectExpensesAccountingAccount();
     this.selectD151Options();
     this.selectProviders();
     this.selectAccountAffectations();
+  }
+  getExpenses() {
+    this.expensesService.selectExpenses().subscribe((res: any) => {
+      this.data = res;
+      this.expensesDataSource = new MatTableDataSource(res);
+      this.spinner = false;
+    });
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -112,14 +137,6 @@ export class ExpenseRecordComponent implements OnInit {
     this.invoiceIva = null;
     this.selectAllAccounts();
     this.expensesFormGroup();
-  }
-  getExpenses() {
-    this.expensesService.selectExpenses().subscribe((res: any) => {
-      this.data = res;
-      console.log(this.data);
-      this.expensesDataSource = new MatTableDataSource(res);
-      this.spinner = false;
-    });
   }
   selectExpensesAccountingAccount() {
     this.accountingAccountsService.selectExpensesAccountingAccounts().subscribe((res: any) => {
@@ -164,7 +181,6 @@ export class ExpenseRecordComponent implements OnInit {
       this.creditAccountId = this.allAccounts[this.banksIndex].idAccountingAccount;
     });
   }
-
   selectAccountAffectations() {
     this.accountAffectationsService.getAccountAffectations().subscribe((res: any) => {
       this.affectations = res;
@@ -172,7 +188,6 @@ export class ExpenseRecordComponent implements OnInit {
       this.creditAffectationIndex = this.affectations.findIndex(a => a.name === 'Crédito');
     });
   }
-
   expensesFormGroup() {
     this.expensesForm = this.formBuilder.group({
       idAccountingAccount: [this.expenseType, Validators.required],
@@ -194,7 +209,6 @@ export class ExpenseRecordComponent implements OnInit {
       this.enabledDebitAccount = false;
     }
   }
-
   changeDebitAccountToCash() {
     const banksId = this.allAccounts[this.banksIndex].idAccountingAccount;
     const accountsReceivable = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
@@ -209,7 +223,6 @@ export class ExpenseRecordComponent implements OnInit {
       this.creditAccountId = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
     }
   }
-
   onSubmit() {
     if (this.expensesForm.valid) {
       if (!this.isEditingExpense) {
@@ -219,14 +232,12 @@ export class ExpenseRecordComponent implements OnInit {
       }
     }
   }
-
   displayCreateExpense() {
     this.title = 'Ingresar nuevo gasto';
     this.condition = this.movementTypes[this.movementTypes.findIndex(res => res.name === 'Contado')].idMovementType;
     this.selectAccountAffectations();
     this.isCreatingExpense = true;
   }
-
   generateDataToSend() {
     this.firstJournalMovement = {
       IdAccountingAccount: this.creditAccountId,
@@ -292,9 +303,7 @@ export class ExpenseRecordComponent implements OnInit {
       };
 
     }
-    console.log(this.dataToSend);
   }
-
   createExpense() {
     this.progressBar = true;
     const today = this.registrationDate;
@@ -319,12 +328,11 @@ export class ExpenseRecordComponent implements OnInit {
     this.isCreatingExpense = false;
     this.inicialize();
   }
-
   editExpense() {
     this.progressBar = true;
     this.generateDataToSend();
     this.isCreatingExpense = false;
-      this.isEditingExpense = false;
+    this.isEditingExpense = false;
     this.expensesService.editExpense(this.dataToSend).subscribe((response) => {
       this.inicialize();
       this.getExpenses();
@@ -338,7 +346,6 @@ export class ExpenseRecordComponent implements OnInit {
       console.log(err);
     });
   }
-
   displayeEditPage(element) {
     this.title = 'Editar gasto';
     let idCreditAccount;
@@ -363,7 +370,6 @@ export class ExpenseRecordComponent implements OnInit {
   deleteExpense(idExpense) {
     this.openConfirmationMessage(idExpense);
   }
-
   openConfirmationMessage(idExpense): void {
     const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
       data: { 'title': 'Eliminar Gasto', 'description': '¿Deseas eliminar el gasto?' }

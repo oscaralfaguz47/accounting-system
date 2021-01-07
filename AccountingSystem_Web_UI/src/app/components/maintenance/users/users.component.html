@@ -14,15 +14,15 @@
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
             </mat-form-field>
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
                 <ng-container matColumnDef="firstName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.firstName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Apellido </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Apellido </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.lastName}} </td>
                 </ng-container>
 
@@ -38,7 +38,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="status">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Estado </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> <span class="text-success" *ngIf="element.status">Activo</span> <span class="text-danger" *ngIf="!element.status">Inactivo</span> </td>
                 </ng-container>
 
@@ -61,6 +61,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
 
 

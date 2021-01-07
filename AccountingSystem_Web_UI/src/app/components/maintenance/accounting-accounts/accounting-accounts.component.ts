@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AccountingAccoutsService } from '../../../services/accounting-accouts.service';
-import { MatDialog, MatTableDataSource } from '@angular/material';
 import { CreateEditAccountingAccountsComponent } from './create-edit-accounting-accounts/create-edit-accounting-accounts.component';
 import { Overlay } from '@angular/cdk/overlay';
+import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-accounting-accounts',
@@ -10,12 +12,25 @@ import { Overlay } from '@angular/cdk/overlay';
   styles: [],
   providers: [AccountingAccoutsService]
 })
-export class AccountingAccountsComponent implements OnInit {
+export class AccountingAccountsComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['code', 'accountName', 'accountAffectationName', 'firstCategoryName', 'secondCategoryName',
     'description', 'icons'];
   public companyName;
   public accountsDataSource: any = [];
+
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.accountsDataSource){
+      this.accountsDataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.accountsDataSource){
+      this.accountsDataSource.sort = value;
+    }
+  }
   public parameters = {};
   public spinner: boolean = true;
   public data = [];
@@ -24,14 +39,16 @@ export class AccountingAccountsComponent implements OnInit {
     this.companyName = localStorage.getItem('companyName');
     this.getAccountingAccounts();
   }
-
+  ngAfterViewInit() {
+    this.accountsDataSource.paginator = this.paginator;
+    this.accountsDataSource.sort = this.sort;
+  }
   ngOnInit() {
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.accountsDataSource.filter = filterValue.trim().toLowerCase();
   }
-
   getAccountingAccounts() {
     this.accountingAccountsService.getAccountingAccounts().subscribe((res: any) => {
       this.data = res;
@@ -46,7 +63,6 @@ export class AccountingAccountsComponent implements OnInit {
     };
     this.openDialog();
   }
-
   updateAccountingAccount(element) {
     this.parameters = {
       idAccountingAccount: element.idAccountingAccount,
@@ -56,7 +72,6 @@ export class AccountingAccountsComponent implements OnInit {
     };
     this.openDialog();
   }
-
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateEditAccountingAccountsComponent, {
       data: this.parameters,

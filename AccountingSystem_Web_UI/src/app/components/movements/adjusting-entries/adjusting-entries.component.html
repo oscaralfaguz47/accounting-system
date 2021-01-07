@@ -37,17 +37,17 @@
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
             </mat-form-field>
-            <table mat-table [dataSource]="journalSeatsDataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="journalSeatsDataSource" class="mat-elevation-z8" matSort>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="seatNumber">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Número Asiento </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Número Asiento </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.seatNumber}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="origin">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Origen </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Origen </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.originName}} </td>
                 </ng-container>
 
@@ -62,7 +62,7 @@
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.description}} </td>
                 </ng-container>
                 <ng-container matColumnDef="amount">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Monto </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.amount | number}} </td>
                 </ng-container>
 
@@ -86,6 +86,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
     </mat-card>
 

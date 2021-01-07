@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MonthlyClosingsService } from '../../../services/monthly-closings.service';
 import { YearsMonthsService } from '../../../services/years-months.service';
@@ -7,6 +7,8 @@ import { ConfirmationMessageComponent } from '../../shared/confirmation-message/
 import { IncomeStatementService } from '../../../services/income-statement.service';
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { LoadingDialogComponent } from '../../shared/loading-dialog/loading-dialog.component';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-monthly-closing',
@@ -14,11 +16,23 @@ import { LoadingDialogComponent } from '../../shared/loading-dialog/loading-dial
   styles: [],
   providers: [MonthlyClosingsService, YearsMonthsService, IncomeStatementService]
 })
-export class MonthlyClosingComponent implements OnInit {
+export class MonthlyClosingComponent implements OnInit, AfterViewInit {
 
   public spinnerCalculating: boolean;
   displayedColumns: string[] = ['month', 'year', 'profitLoss', 'detail', 'date', 'icons'];
   dataSource: any = [];
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.dataSource){
+      this.dataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.dataSource){
+      this.dataSource.sort = value;
+    }
+  }
   public idCompany;
   public progressBar: boolean = false;
   public companyName: string;
@@ -39,6 +53,10 @@ export class MonthlyClosingComponent implements OnInit {
   constructor(private snackBar: MatSnackBar, public dialog: MatDialog, private yearsMonthsService: YearsMonthsService,
     private monthlyClosingsService: MonthlyClosingsService,
     private formBuilder: FormBuilder, private incomeStatementService: IncomeStatementService) { }
+    ngAfterViewInit() {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
 
   ngOnInit() {
     this.idCompany = localStorage.getItem('idCompany');
