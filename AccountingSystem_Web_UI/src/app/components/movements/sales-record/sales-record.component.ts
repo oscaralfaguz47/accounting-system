@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
 import { IncomesService } from '../../../services/incomes.service';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AccountingAccoutsService } from '../../../services/accounting-accouts.service';
 import { D151Service } from '../../../services/d151.service';
 import { CustomerService } from '../../../services/customers.service';
@@ -13,11 +15,10 @@ import { JournalMovementsService } from '../../../services/journal-movements.ser
 import { AlertMessageComponent } from '../../shared/alert-message/alert-message.component';
 import { Router } from '@angular/router';
 import { DataGlobalService } from '../../../services/data-global.service';
-import * as jsPdf from 'jspdf';
-import * as $ from 'jquery';
 
 
 declare var myExtObject: any;
+
 
 @Component({
   selector: 'app-sales-record',
@@ -26,10 +27,28 @@ declare var myExtObject: any;
   providers: [IncomesService, D151Service, CustomerService, MovementTypesService, AccountingAccoutsService, DataGlobalService,
     AccountAffectationsService, JournalMovementsService]
 })
-export class SalesRecordComponent implements OnInit {
+export class SalesRecordComponent implements OnInit, AfterViewInit {
+
+  // Table
 
   displayedColumns: string[] = ['voucher', 'customerName', 'accountName', 'date', 'totalAmount', 'd151Name', 'movementTypeName', 'icons'];
   salesDataSource: any = [];
+  public data = [];
+
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.salesDataSource){
+      this.salesDataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.salesDataSource){
+      this.salesDataSource.sort = value;
+    }
+  }
+
+
   public idCompany;
   public title: string;
   public progressBar: boolean = false;
@@ -68,10 +87,6 @@ export class SalesRecordComponent implements OnInit {
   public creditAffectationIndex: number;
   public idIncome;
   public spinner: boolean = true;
-  public data = [];
-
-
-
 
   constructor(private dataGlobaService: DataGlobalService, private router: Router, private journalMovementsService: JournalMovementsService,
     private accountAffectationsService: AccountAffectationsService,
@@ -80,6 +95,10 @@ export class SalesRecordComponent implements OnInit {
     private movementTypesService: MovementTypesService, private customersService: CustomerService,
     private d151Service: D151Service, private accountingAccountsService: AccountingAccoutsService,
     private incomesService: IncomesService, public dialog: MatDialog, private formBuilder: FormBuilder) {
+  }
+  ngAfterViewInit() {
+    this.salesDataSource.paginator = this.paginator;
+    this.salesDataSource.sort = this.sort;
   }
 
   ngOnInit() {
@@ -98,10 +117,19 @@ export class SalesRecordComponent implements OnInit {
     this.selectAccountAffectations();
 
   }
+  getIncomes() {
+    this.incomesService.SelectIncomes().subscribe((res: any) => {
+      this.data = res;
+      this.salesDataSource = new MatTableDataSource(res);
+      this.spinner = false;
+    });
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.salesDataSource.filter = filterValue.trim().toLowerCase();
-    console.log(this.salesDataSource.filteredData);
+    if (this.salesDataSource.paginator) {
+      this.salesDataSource.paginator.firstPage();
+    }
   }
   exportExcelFile(): void {
     this.dataGlobaService.exportToExcel(this.salesDataSource.filteredData, 'Ventas');
@@ -127,14 +155,6 @@ export class SalesRecordComponent implements OnInit {
     this.secondJournalMovement = {};
     this.selectAllAccounts();
     this.salesFormGroup();
-  }
-  getIncomes() {
-    this.incomesService.SelectIncomes().subscribe((res: any) => {
-      this.data = res;
-      this.salesDataSource = new MatTableDataSource(res);
-      this.spinner = false;
-    });
-
   }
   selectIncomesAccountingAccount() {
     this.accountingAccountsService.selectIncomesAccountingAccounts().subscribe((res: any) => {
@@ -171,7 +191,6 @@ export class SalesRecordComponent implements OnInit {
       this.indexCreditMovementType = this.movementTypes.findIndex(res => res.name === 'Crédito');
     });
   }
-
   selectAllAccounts() {
     this.accountingAccountService.selectAllAccountingAccounts().subscribe((res: any) => {
       this.allAccounts = res;
@@ -181,7 +200,6 @@ export class SalesRecordComponent implements OnInit {
       this.debitAccountId = this.allAccounts[this.banksIndex].idAccountingAccount;
     });
   }
-
   selectAccountAffectations() {
     this.accountAffectationsService.getAccountAffectations().subscribe((res: any) => {
       this.affectations = res;
@@ -189,7 +207,6 @@ export class SalesRecordComponent implements OnInit {
       this.creditAffectationIndex = this.affectations.findIndex(a => a.name === 'Crédito');
     });
   }
-
   salesFormGroup() {
     this.salesForm = this.formBuilder.group({
       idAccountingAccount: [this.incomeType, Validators.required],
@@ -211,7 +228,6 @@ export class SalesRecordComponent implements OnInit {
       this.enabledDebitAccount = false;
     }
   }
-
   changeDebitAccountToCash() {
     const banksId = this.allAccounts[this.banksIndex].idAccountingAccount;
     const accountsReceivable = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
@@ -226,7 +242,6 @@ export class SalesRecordComponent implements OnInit {
       this.debitAccountId = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
     }
   }
-
   onSubmit() {
     if (this.salesForm.valid) {
       if (!this.isEditingSale) {
@@ -236,14 +251,12 @@ export class SalesRecordComponent implements OnInit {
       }
     }
   }
-
   displayCreateSale() {
     this.title = 'Ingresar nueva venta';
     this.condition = this.movementTypes[this.movementTypes.findIndex(res => res.name === 'Contado')].idMovementType;
     this.selectAccountAffectations();
     this.isCreatingSale = true;
   }
-
   generateDataToSend() {
     this.firstJournalMovement = {
       IdAccountingAccount: this.debitAccountId,
@@ -310,7 +323,6 @@ export class SalesRecordComponent implements OnInit {
 
     }
   }
-
   createSale() {
     this.progressBar = true;
     const today = this.registrationDate;
@@ -336,7 +348,6 @@ export class SalesRecordComponent implements OnInit {
     this.isCreatingSale = false;
     this.inicialize();
   }
-
   editSale() {
     this.progressBar = true;
     this.generateDataToSend();
@@ -355,7 +366,6 @@ export class SalesRecordComponent implements OnInit {
       console.log(err);
     });
   }
-
   displayeEditPage(element) {
     this.title = 'Editar venta';
     let idDebitAccount;
@@ -376,12 +386,9 @@ export class SalesRecordComponent implements OnInit {
       this.isEditingSale = true;
     });
   }
-
-
   deleteIncome(idIncome) {
     this.openConfirmationMessage(idIncome);
   }
-
   openConfirmationMessage(idIncome): void {
     const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
       data: { 'title': 'Eliminar Venta', 'description': '¿Deseas eliminar la venta?' }

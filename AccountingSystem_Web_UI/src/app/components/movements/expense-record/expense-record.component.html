@@ -30,23 +30,23 @@
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
             </mat-form-field>
-            <table mat-table [dataSource]="expensesDataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="expensesDataSource" class="mat-elevation-z8" matSort>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="voucher">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> #Factura </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header mat-sort-header> #Factura </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.voucher}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="providerName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Proveedor </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Proveedor </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.providerName}} </td>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="accountName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Tipo Gasto </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Tipo Gasto </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountName}} </td>
                 </ng-container>
 
@@ -56,12 +56,12 @@
                 </ng-container>
 
                 <ng-container matColumnDef="totalAmount">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto Total </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Monto Total </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.totalAmount | number}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="d151Name">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> D151 </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> D151 </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.d151Name}} </td>
                 </ng-container>
 
@@ -71,7 +71,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="movementTypeName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Condición </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Condición </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.movementTypeName}} </td>
                 </ng-container>
 
@@ -97,6 +97,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 
             <div class="container" *ngIf="data.length == 0">
                 <br>

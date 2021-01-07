@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { MatDialog, MatSnackBar, MatTableDataSource } from '@angular/material';
 import { CreateEditUserComponent } from './create-edit-user/create-edit-user.component';
 import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { Overlay } from '@angular/cdk/overlay';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 export interface PeriodicElement {
   name: string;
@@ -19,14 +21,29 @@ export interface PeriodicElement {
   styles: [],
   providers: [UserService]
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, AfterViewInit {
   displayedColumns = ['firstName', 'lastName', 'email', 'roll', 'status', 'icons'];
   dataSource: any = [];
+  @ViewChild(MatPaginator, {static: false})
+  set paginator(value: MatPaginator) {
+    if (this.dataSource){
+      this.dataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, {static: false})
+  set sort(value: MatSort) {
+    if (this.dataSource){
+      this.dataSource.sort = value;
+    }
+  }
   public parameters;
   public spinner: boolean = true;
 
   constructor(private userService: UserService, public dialog: MatDialog, private snackBar: MatSnackBar, private overlay: Overlay) { }
-
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
   ngOnInit() {
     this.getUsers();
   }

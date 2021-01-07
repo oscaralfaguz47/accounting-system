@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { JournalSeatsService } from '../../../services/journal-seats.service';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators, FormGroupDirective } from '@angular/forms';
 import { AccountingAccoutsService } from '../../../services/accounting-accouts.service';
@@ -8,6 +8,8 @@ import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-chan
 import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
 import { JournalMovementsService } from '../../../services/journal-movements.service';
 import { Router } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -16,15 +18,27 @@ import { Router } from '@angular/router';
   styles: [],
   providers: [JournalSeatsService, AccountingAccoutsService]
 })
-export class AdjustingEntriesComponent implements OnInit {
+export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['seatNumber', 'origin', 'date', 'description', 'amount', 'icons'];
+  public journalSeatsDataSource: any = [];
+  @ViewChild(MatPaginator, { static: false })
+  set paginator(value: MatPaginator) {
+    if (this.journalSeatsDataSource) {
+      this.journalSeatsDataSource.paginator = value;
+    }
+  }
+  @ViewChild(MatSort, { static: false })
+  set sort(value: MatSort) {
+    if (this.journalSeatsDataSource) {
+      this.journalSeatsDataSource.sort = value;
+    }
+  }
 
   public titleCreateEdit: string;
   public companyName;
   public movementsForm: FormGroup;
   public seatForm: FormGroup;
-  public journalSeatsDataSource: any = [];
   public journalMovementsBySeat: {};
   public viewSeats: boolean = false;
   public creatingSeat: boolean = false;
@@ -61,9 +75,10 @@ export class AdjustingEntriesComponent implements OnInit {
     private journalMovementsService: JournalMovementsService,
     private accountAffectationsService: AccountAffectationsService,
     private accountingAccountsService: AccountingAccoutsService) {
-
-
-
+  }
+  ngAfterViewInit() {
+    this.journalSeatsDataSource.paginator = this.paginator;
+    this.journalSeatsDataSource.sort = this.sort;
   }
 
   ngOnInit() {
@@ -82,18 +97,23 @@ export class AdjustingEntriesComponent implements OnInit {
     this.formSeat();
     this.formMovements();
   }
+  getJournalSeats() {
+    this.spinner = true;
+    this.journalSeatsService.selectJournalSeats().subscribe((res: any) => {
+      this.journalSeatsDataSource = new MatTableDataSource(res);
+      this.spinner = false;
+    });
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.journalSeatsDataSource.filter = filterValue.trim().toLowerCase();
   }
-
   formSeat() {
     this.seatForm = this.formBuilder.group({
       seatDate: ['', Validators.required],
       seatDescription: ['', Validators.required]
     });
   }
-
   formMovements() {
     this.movementsForm = this.formBuilder.group({
       accountId: ['', Validators.required],
@@ -102,7 +122,6 @@ export class AdjustingEntriesComponent implements OnInit {
       movementDescription: ['']
     });
   }
-
   inicializePage() {
     this.tableRows = [];
     this.accountId = null;
@@ -119,22 +138,11 @@ export class AdjustingEntriesComponent implements OnInit {
     this.journalMovementObject = {};
     this.journalMovementsArray = [];
   }
-
-
   chargeAccountAffectationsDropdown() {
     this.accountAffectationsService.getAccountAffectations().subscribe((res: any) => {
       this.accountAffectation = res;
     });
   }
-
-  getJournalSeats() {
-    this.spinner = true;
-     this.journalSeatsService.selectJournalSeats().subscribe((res: any) => {
-      this.journalSeatsDataSource = new MatTableDataSource(res);
-      this.spinner = false;
-     });
-  }
-
   getJournalMovements(seat) {
     this.titleCreateEdit = 'Editar Asiento Contable';
     if (seat.originName === 'Asiento de apertura') {
@@ -169,7 +177,6 @@ export class AdjustingEntriesComponent implements OnInit {
       this.creatingSeat = true;
     });
   }
-
   displaySeats() {
     this.inicializePage();
     this.viewDetails = false;
@@ -177,7 +184,6 @@ export class AdjustingEntriesComponent implements OnInit {
     this.creatingSeat = false;
     this.spinner = false;
   }
-
   displayCreateSeatPage() {
     this.viewDetails = false;
     this.inicializePage();
@@ -185,7 +191,6 @@ export class AdjustingEntriesComponent implements OnInit {
     this.viewSeats = false;
     this.titleCreateEdit = 'Crear Asiento Contable';
   }
-
   addTableRow(data, formDirective: FormGroupDirective) {
 
     if (this.movementsForm.valid) {
@@ -205,12 +210,10 @@ export class AdjustingEntriesComponent implements OnInit {
 
     }
   }
-
   deleteTableRow(indexRow) {
     this.tableRows.splice(indexRow, 1);
     this.detectChanges();
   }
-
   detectChanges() {
     this.debitAmount = 0;
     this.creditAmount = 0;
@@ -222,7 +225,6 @@ export class AdjustingEntriesComponent implements OnInit {
       }
     }
   }
-
   onSubmit() {
 
     if (this.seatForm.valid) {
@@ -241,11 +243,10 @@ export class AdjustingEntriesComponent implements OnInit {
     }
 
   }
-
   createSeat() {
     if (this.titleCreateEdit === 'Crear Asiento Contable') {
-        this.formSeat();
-        this.formMovements();
+      this.formSeat();
+      this.formMovements();
     }
     this.seat = {};
     this.journalMovementObject = {};
@@ -288,7 +289,6 @@ export class AdjustingEntriesComponent implements OnInit {
       console.log(err);
     });
   }
-
   updateSeat() {
     this.seat = {};
     this.journalMovementObject = {};
@@ -330,26 +330,24 @@ export class AdjustingEntriesComponent implements OnInit {
       console.log(err);
     });
   }
-
-deleteJournalSeat(idJournalSeat) {
-  const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
-    data: { 'title': 'Eliminar Asiento', 'description': '¿Deseas eliminar el asiento?' }
-  });
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      this.progressBar = true;
-      this.journalSeatsService.deleteJournalSeat(idJournalSeat).subscribe((response) => {
-        this.getJournalSeats();
-        this.openSnackBar('¡Asiento Eliminado!');
-        this.progressBar = false;
-      }, err => {
-        this.openSnackBar('¡Error de servidor!');
-        console.log(err);
-      });
-    }
-  });
-}
-
+  deleteJournalSeat(idJournalSeat) {
+    const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
+      data: { 'title': 'Eliminar Asiento', 'description': '¿Deseas eliminar el asiento?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.progressBar = true;
+        this.journalSeatsService.deleteJournalSeat(idJournalSeat).subscribe((response) => {
+          this.getJournalSeats();
+          this.openSnackBar('¡Asiento Eliminado!');
+          this.progressBar = false;
+        }, err => {
+          this.openSnackBar('¡Error de servidor!');
+          console.log(err);
+        });
+      }
+    });
+  }
   openConfirmationMessage(): void {
     if (this.titleCreateEdit === 'Editar Asiento Contable') {
       const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
@@ -371,14 +369,11 @@ deleteJournalSeat(idJournalSeat) {
       });
     }
   }
-
   viewSeatDetails(element) {
-this.viewSeats = false;
-this.viewDetails = true;
-this.seatElement = element;
+    this.viewSeats = false;
+    this.viewDetails = true;
+    this.seatElement = element;
   }
-
-
   openSnackBar(message) {
     this.snackBar.openFromComponent(SnackBarSavedChangesComponent, {
       data: { message: message }, duration: 2000,

@@ -14,17 +14,17 @@
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
             </mat-form-field>
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyName}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="identification">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Identificación </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Identificación </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.companyIdentification}} </td>
                 </ng-container>
 
@@ -56,6 +56,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
         </div>
 
 

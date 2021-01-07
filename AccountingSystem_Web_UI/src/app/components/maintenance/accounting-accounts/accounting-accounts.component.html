@@ -28,30 +28,30 @@
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
             </mat-form-field>
-            <table mat-table [dataSource]="accountsDataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="accountsDataSource" class="mat-elevation-z8" matSort>
 
                 <ng-container matColumnDef="code">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Codigo </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Codigo </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.code}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="accountName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Nombre </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="accountAffectationName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Afectación </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Afectación </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountAffectationName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="firstCategoryName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Categoría </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Categoría </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.firstCategoryName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="secondCategoryName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Sub Categoría </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Sub Categoría </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.secondCategoryName}} </td>
                 </ng-container>
 
@@ -74,6 +74,7 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
             <div class="container" *ngIf="data.length == 0">
                 <br>
                 <br>

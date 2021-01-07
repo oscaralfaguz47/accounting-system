@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 // Material
-import { MatButtonModule, MatDialogModule, MatNativeDateModule } from '@angular/material';
+import { MatButtonModule, MatDialogModule, MatNativeDateModule} from '@angular/material';
+import {MatSortModule} from '@angular/material/sort';
 import {MatCardModule} from '@angular/material/card';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
@@ -43,7 +44,8 @@ const MaterialComponents = [
   MatNativeDateModule,
   MatRadioModule,
   MatTooltipModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatSortModule
 ];
 
 @NgModule({
