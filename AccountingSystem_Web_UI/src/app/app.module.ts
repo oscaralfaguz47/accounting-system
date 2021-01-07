@@ -60,6 +60,7 @@ import { MatDateFormats, MAT_DATE_FORMATS, NativeDateAdapter, DateAdapter } from
 import { AlertMessageComponent } from './components/shared/alert-message/alert-message.component';
 import { NoOpeningSeatGuard } from './services/no-opening-seat.guard';
 import { DataGlobalService } from './services/data-global.service';
+import { SpinnerLoadingComponent } from './components/shared/spinner-loading/spinner-loading.component';
 
 // const MY_DATE_FORMATS = {
 //   parse: {
@@ -118,7 +119,8 @@ export class AppDateAdapter extends NativeDateAdapter {
     IncomeStatementComponent,
     BalanceSheetComponent,
     LoadingDialogComponent,
-    AlertMessageComponent
+    AlertMessageComponent,
+    SpinnerLoadingComponent
   ],
   entryComponents: [
     CreateCompanyComponent,

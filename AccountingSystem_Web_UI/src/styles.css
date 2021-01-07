@@ -301,11 +301,6 @@ table {
     font-weight: normal;
 }
 
-.spinner-container {
-    text-align: center !important;
-    padding-top: 40px;
-}
-
 .custom-spinner {
     text-align: center !important;
     color: #366ACF !important;
