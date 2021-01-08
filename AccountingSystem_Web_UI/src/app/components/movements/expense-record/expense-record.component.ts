@@ -23,7 +23,7 @@ import { MatSort } from '@angular/material/sort';
   providers: [ExpensesService, D151Service, ProvidersService, MovementTypesService, AccountingAccoutsService,
     AccountAffectationsService, JournalMovementsService]
 })
-export class ExpenseRecordComponent implements OnInit, AfterViewInit {
+export class ExpenseRecordComponent implements OnInit {
 
   //Table
   displayedColumns: string[] = ['voucher', 'providerName', 'accountName', 'date', 'totalAmount', 'details', 'd151Name', 'movementTypeName', 'icons'];
@@ -42,6 +42,7 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
       this.expensesDataSource.sort = value;
     }
   }
+  test: boolean;
   public title: string;
   public idCompany;
   public progressBar: boolean = false;
@@ -94,6 +95,7 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
       this.expensesDataSource.paginator = this.paginator;
       this.expensesDataSource.sort = this.sort;
     }
+
   ngOnInit() {
 
     this.expensesFormGroup();
@@ -115,6 +117,7 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
       this.data = res;
       this.expensesDataSource = new MatTableDataSource(res);
       this.spinner = false;
+      this.progressBar = false;
     });
   }
   applyFilter(event: Event) {
@@ -224,7 +227,9 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
     }
   }
   onSubmit() {
+
     if (this.expensesForm.valid) {
+      this.progressBar = true;
       if (!this.isEditingExpense) {
         this.createExpense();
       } else {
@@ -305,13 +310,12 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
     }
   }
   createExpense() {
-    this.progressBar = true;
     const today = this.registrationDate;
     const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     this.registrationDate = (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear() + ' ' + time;
     this.generateDataToSend();
-    this.isCreatingExpense = false;
     this.expensesService.createExpense(this.dataToSend).subscribe((response) => {
+      this.isCreatingExpense = false;
       this.inicialize();
       this.getExpenses();
       this.dataToSend = {};
@@ -325,15 +329,17 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
     });
   }
   cancelCreateExpense() {
+    this.progressBar = true;
     this.isCreatingExpense = false;
     this.inicialize();
+    this.getExpenses();
   }
+
   editExpense() {
-    this.progressBar = true;
     this.generateDataToSend();
-    this.isCreatingExpense = false;
-    this.isEditingExpense = false;
     this.expensesService.editExpense(this.dataToSend).subscribe((response) => {
+      this.isEditingExpense = false;
+      this.isCreatingExpense = false;
       this.inicialize();
       this.getExpenses();
       this.dataToSend = {};

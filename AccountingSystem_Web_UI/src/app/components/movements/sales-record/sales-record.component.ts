@@ -122,6 +122,7 @@ export class SalesRecordComponent implements OnInit, AfterViewInit {
       this.data = res;
       this.salesDataSource = new MatTableDataSource(res);
       this.spinner = false;
+      this.progressBar = false;
     });
   }
   applyFilter(event: Event) {
@@ -244,6 +245,7 @@ export class SalesRecordComponent implements OnInit, AfterViewInit {
   }
   onSubmit() {
     if (this.salesForm.valid) {
+      this.progressBar = true;
       if (!this.isEditingSale) {
         this.createSale();
       } else {
@@ -329,31 +331,30 @@ export class SalesRecordComponent implements OnInit, AfterViewInit {
     const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     this.registrationDate = (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear() + ' ' + time;
     this.generateDataToSend();
-    this.isCreatingSale = false;
-    console.log(this.dataToSend);
+
     this.incomesService.createSale(this.dataToSend).subscribe((response) => {
+      this.isCreatingSale = false;
       this.inicialize();
       this.getIncomes();
       this.dataToSend = {};
       this.JournalMovements = [];
-      this.progressBar = false;
       this.openSnackBar('¡Venta Registrada!');
-      this.progressBar = false;
     }, err => {
       this.openSnackBar('¡Error de servidor!');
       console.log(err);
     });
   }
   cancelCreateIncome() {
+    this.progressBar = true;
+    this.getIncomes();
     this.isCreatingSale = false;
     this.inicialize();
   }
   editSale() {
-    this.progressBar = true;
     this.generateDataToSend();
-    this.isCreatingSale = false;
-      this.isEditingSale = false;
     this.incomesService.editSale(this.dataToSend).subscribe((response) => {
+      this.isCreatingSale = false;
+      this.isEditingSale = false;
       this.inicialize();
       this.getIncomes();
       this.dataToSend = {};
