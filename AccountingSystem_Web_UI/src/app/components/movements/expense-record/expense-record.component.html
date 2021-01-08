@@ -10,7 +10,7 @@
             <button *ngIf="!isCreatingExpense" class="btnCreate" (click)="displayCreateExpense()" mat-button>Agregar</button>
         </div>
 
-        <div *ngIf="!isCreatingExpense" class="table-responsive">
+        <div *ngIf="!isCreatingExpense && !progressBar" class="table-responsive">
             <mat-form-field>
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
@@ -88,7 +88,7 @@
                 <br>
                 <p class="row justify-content-center text-danger">No existen registros</p>
             </div>
-            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+            <mat-paginator *ngIf="!progressBar" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 
 
         </div>
@@ -188,8 +188,8 @@
                 </form>
             </mat-card>
             <mat-card-actions class="buttonsForms">
-                <button class="btnCreate fixed-cancel-button" (click)="cancelCreateExpense()" mat-button>Cancelar</button>
-                <button class="btnCreate fixed-save-button" form="expensesForm" mat-button>Guardar</button>
+                <button class="btnCreate fixed-cancel-button" [disabled]="progressBar" (click)="cancelCreateExpense()" mat-button>Cancelar</button>
+                <button class="btnCreate fixed-save-button" [disabled]="progressBar" form="expensesForm" mat-button>Guardar</button>
             </mat-card-actions>
         </div>
     </mat-card>

@@ -72,6 +72,7 @@ export class MonthlyClosingComponent implements OnInit, AfterViewInit {
   }
   getMonthlyClosings() {
     this.monthlyClosingsService.selectMonthlyClosings().subscribe((res: any) => {
+      this.progressBar = false;
       this.data = res;
       this.spinner = false;
       this.dataSource = new MatTableDataSource(res);
@@ -155,7 +156,9 @@ export class MonthlyClosingComponent implements OnInit, AfterViewInit {
 
   cancelCreate() {
     this.isCreating = false;
+    this.progressBar = true;
     this.inicialize();
+    this.getMonthlyClosings();
   }
 
   openLoadingDialog(): void {

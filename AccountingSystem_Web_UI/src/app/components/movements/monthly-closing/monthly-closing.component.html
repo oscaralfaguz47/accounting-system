@@ -10,7 +10,7 @@
             <button *ngIf="!isCreating" class="btnCreate" (click)="displayCreate()" mat-button>Agregar</button>
         </div>
 
-        <div *ngIf="!isCreating" class="table-responsive">
+        <div *ngIf="!isCreating && !progressBar" class="table-responsive">
             <mat-form-field>
                 <mat-label>Filtrar Datos</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
@@ -101,8 +101,8 @@
                 </form>
             </mat-card>
             <mat-card-actions class="buttonsForms">
-                <button class="btnCreate fixed-cancel-button" (click)="cancelCreate()" mat-button>Cancelar</button>
-                <button class="btnCreate fixed-save-button" form="form" mat-button>Guardar</button>
+                <button class="btnCreate fixed-cancel-button" [disabled]="progressBar" (click)="cancelCreate()" mat-button>Cancelar</button>
+                <button class="btnCreate fixed-save-button" [disabled]="progressBar" form="form" mat-button>Guardar</button>
             </mat-card-actions>
         </div>
     </mat-card>

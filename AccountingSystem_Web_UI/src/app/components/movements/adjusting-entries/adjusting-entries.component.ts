@@ -66,7 +66,7 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
   public updatingSeat: boolean = false;
   public idJournalSeat;
   public seatElement;
-  public spinner: boolean = true;
+  public spinner: boolean = false;
 
 
   constructor(public dialog: MatDialog, private snackBar: MatSnackBar,
@@ -88,7 +88,7 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
     this.seat = {};
     this.journalMovementObject = {};
     this.journalMovementsArray = [];
-    this.getJournalSeats();
+    //this.getJournalSeats();
     this.chargeAccountAffectationsDropdown();
 
     this.accountingAccountsService.selectAllAccountingAccounts().subscribe((res: any) => {
@@ -102,6 +102,8 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
     this.journalSeatsService.selectJournalSeats().subscribe((res: any) => {
       this.journalSeatsDataSource = new MatTableDataSource(res);
       this.spinner = false;
+      this.progressBar = false;
+      this.viewSeats = true;
     });
   }
   applyFilter(event: Event) {
@@ -178,11 +180,13 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
     });
   }
   displaySeats() {
-    this.viewSeats = true;
+    //this.progressBar = true;
+    this.getJournalSeats();
+    //this.viewSeats = true;
     this.inicializePage();
     this.viewDetails = false;
     this.creatingSeat = false;
-    this.spinner = false;
+    //this.spinner = false;
   }
   displayCreateSeatPage() {
     this.viewDetails = false;
@@ -275,13 +279,12 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
       Amount: this.debitAmount,
       JournalMovements: this.journalMovementsArray
     };
-    console.log(this.seat);
+    this.spinner = true;
     this.journalSeatsService.createJournalSeat(this.seat).subscribe((response) => {
       this.seat = {};
       this.progressBar = false;
       this.openSnackBar('¡Asiento Creado!');
       this.creatingSeat = false;
-      this.viewSeats = true;
       this.progressBar = false;
       this.getJournalSeats();
     }, err => {
@@ -320,7 +323,6 @@ export class AdjustingEntriesComponent implements OnInit, AfterViewInit {
     console.log(this.seat);
     this.journalSeatsService.updateJournalSeat(this.seat).subscribe((response) => {
       this.getJournalSeats();
-      this.progressBar = false;
       this.openSnackBar('¡Asiento Actualizado!');
       this.creatingSeat = false;
       this.viewSeats = true;
