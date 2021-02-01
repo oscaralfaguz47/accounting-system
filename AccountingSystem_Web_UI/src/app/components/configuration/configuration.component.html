@@ -1,6 +1,6 @@
 <div class="globalContentForm">
     <mat-card class="globalForm">
-        <mat-card-title>Configuración</mat-card-title>
+        <mat-card-title class="table-title">Configuración</mat-card-title>
         <mat-card-subtitle>
             <span *ngIf="labelCreateOpeningSeat">La empresa <strong>{{companyName}}</strong> no cuenta con un asiento de apertura.</span>
             <br>
@@ -12,7 +12,6 @@
         </mat-card-subtitle>
         <button class="btnCreate" *ngIf="labelCreateOpeningSeat" (click)="displayCreateSeatForm()" mat-button>Crear Asiento</button>
     </mat-card>
-    <br>
     <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
     <mat-card-content *ngIf="existsOpeningSeat">
         <mat-card>

@@ -1,23 +1,19 @@
 <div class="globalContentForm">
-    <mat-card id="mat-card-home" class="row justify-content-center">
-        <div *ngIf="idCompany == 'not-defined'" class="row justify-content-center m-5">
+    <mat-card class="text-center">
+        <div *ngIf="idCompany == 'not-defined'">
             <mat-card-subtitle>
                 <div id="home-intro-container">
-
                     <p>
                         Hola {{userName}} bienvenido (a) al sistema contable, para iniciar por favor crea una nueva empresa.
                     </p>
 
-                    <div class="row justify-content-center m-5">
+                    <div>
                         <button class="btnCreate" (click)="createCompany()" mat-button>Crear Empresa</button>
                     </div>
-
                 </div>
             </mat-card-subtitle>
         </div>
-
-        <div class="row justify-content-center m-5">
-
+        <div>
             <mat-card-subtitle>
                 <div id="home-intro-container">
                     <p *ngIf="idCompany == 'not-defined'">
@@ -27,13 +23,14 @@
                         Hola {{userName}} si tienes alguna duda con el sistema puedes guiarte con el manual de usuario que te dejo a continuación, o bien comunícate al número: 8531-8674 con Oscar Alfaro, o al correo oscar.alfaguz47@gmail.com.
                     </p>
 
-                    <h3>MANUAL DE USUARIO</h3>
-                    <br>
-                    <embed src="assets/files/manual-usuario.pdf" type="application/pdf">
                 </div>
             </mat-card-subtitle>
-
         </div>
     </mat-card>
 
+    <mat-card class="text-center">
+        <h3>MANUAL DE USUARIO</h3>
+        <br>
+        <embed src="assets/files/manual-usuario.pdf" type="application/pdf">
+    </mat-card>
 </div>

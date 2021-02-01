@@ -1,0 +1,120 @@
+/* Sidenav*/
+
+mat-sidenav {
+    background-color: #fff;
+}
+
+mat-sidenav-content {
+    background-image: url('https://wallpaperaccess.com/full/378019.jpg');
+    background-repeat: no-repeat;
+    height: 100%;
+    background-size: cover;
+}
+
+.sidebar-background {}
+
+.sideNav-background {
+    background-color: rgb(0, 57, 78, 0.9);
+    color: white;
+}
+
+.example-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.example-is-mobile .example-toolbar {
+    position: fixed;
+    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+    z-index: 2;
+}
+
+h1.example-app-name {
+    margin-left: 8px;
+}
+
+.example-sidenav-container {
+    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+     causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+    flex: 1;
+}
+
+.example-is-mobile .example-sidenav-container {
+    /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
+     `<body>` to be our scrolling element for mobile layouts. */
+    flex: 1 0 auto;
+}
+
+.navbar-links a {
+    border-radius: 5px;
+}
+
+#menu-button {
+    outline: none !important;
+}
+
+#Logout-icon {
+    width: 100%;
+    text-align: right;
+    vertical-align: middle;
+}
+
+#logOutLink {
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 12px;
+    border: solid 1px blue;
+    border-radius: 15px;
+    padding: 4px;
+    padding-right: 7px;
+    background-color: gray;
+    color: white;
+}
+
+#logOutLink:hover {
+    background-color: #007bff;
+}
+
+#logOUtMatIcon {
+    display: none;
+    padding-left: 22px !important;
+}
+
+#Logout-icon a mat-icon {
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 50%;
+    text-align: center;
+}
+
+#Logout-icon a mat-icon:hover {
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #007bff;
+}
+
+#Logout-icon mat-label {
+    font-size: 15px;
+}
+
+.companyDropdown {
+    font-size: 15px;
+    padding-top: 8px;
+    padding-right: 15px;
+    font-size: 15px;
+    width: 10px;
+    padding-left: 7px;
+}
+
+@media(max-width: 768px) {
+    mat-sidenav-content {
+        background-attachment: fixed;
+    }
+}

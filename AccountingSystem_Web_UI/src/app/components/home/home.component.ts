@@ -6,7 +6,7 @@ import { Overlay } from '@angular/cdk/overlay';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styles: []
+  styleUrls:['./home.component.css']
 })
 export class HomeComponent implements OnInit {
 
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
     this.idCompany = localStorage.getItem('idCompany');
     const currentDate = new Date();
     this.date = currentDate.getDay() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear();
-    
+
     console.log(this.date);
    }
 

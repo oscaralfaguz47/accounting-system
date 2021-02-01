@@ -2,14 +2,14 @@
 
     <mat-card>
         <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
-        <br>
         <mat-card-title class="table-title">Cierres Mensuales</mat-card-title>
 
         <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
         <div class="buttonsHeadersContainer">
             <button *ngIf="!isCreating" class="btnCreate" (click)="displayCreate()" mat-button>Agregar</button>
         </div>
-
+    </mat-card>
+    <mat-card>
         <div *ngIf="!isCreating && !progressBar" class="table-responsive">
             <mat-form-field>
                 <mat-label>Filtrar Datos</mat-label>
