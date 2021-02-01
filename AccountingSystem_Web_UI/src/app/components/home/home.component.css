@@ -1,0 +1,16 @@
+#home-intro-container p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#home-intro-container h3 {
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+
+embed {
+    width: 100%;
+    height: 600px;
+    margin-bottom: 10px;
+}

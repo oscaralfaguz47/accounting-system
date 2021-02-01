@@ -19,7 +19,7 @@ declare var myExtObject: any;
 @Component({
   selector: 'app-sidenav',
   templateUrl: './sidenav.component.html',
-  styles: [],
+  styleUrls:['./sidenav.component.css'],
   providers: [UserService, CompaniesService]
 })
 export class SidenavComponent implements OnInit, DoCheck {

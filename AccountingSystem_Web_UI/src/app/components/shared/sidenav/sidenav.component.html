@@ -3,7 +3,6 @@
         <button id="menu-button" mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
         <h1 id="sidenavTitle" class="example-app-name">Sistema Contable</h1>
 
-
         <div id="Logout-icon">
             <mat-label>{{companyName}}</mat-label>
             <mat-form-field *ngIf="userHasCompanies" class="companyDropdown">
@@ -15,13 +14,13 @@
             </mat-form-field>
             <a id="logOutLink" (click)="openConfirmationMessage()"> Cerrar Sesión</a>
             <a id="logOUtMatIcon">
-                <mat-icon (click)="logout()">clear</mat-icon>
+                <mat-icon (click)="openConfirmationMessage()">clear</mat-icon>
             </a>
         </div>
     </mat-toolbar>
 
     <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-        <mat-sidenav #snav [opened]="screenWidth > 840" [mode]="(screenWidth > 840) ? 'side' : 'over'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+        <mat-sidenav class="sidebar-background" #snav [opened]="screenWidth > 840" [mode]="(screenWidth > 840) ? 'side' : 'over'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
             <mat-nav-list class="navbar-links" (click)="closeSideNav()">
                 <a mat-list-item [routerLinkActive]="['activeSubTab']" [routerLink]="'inicio'">
                     <mat-icon>home</mat-icon> Inicio
@@ -43,9 +42,7 @@
         </mat-sidenav>
 
         <mat-sidenav-content>
-            <div class="col-lg-11">
-                <router-outlet></router-outlet>
-            </div>
+            <router-outlet></router-outlet>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>

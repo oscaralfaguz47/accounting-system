@@ -48,7 +48,6 @@ export class SalesRecordComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   public idCompany;
   public title: string;
   public progressBar: boolean = false;

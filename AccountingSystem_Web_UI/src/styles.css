@@ -102,127 +102,20 @@ body {
 }
 
 
-/* Sidenav*/
-
-.example-container {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
-.example-is-mobile .example-toolbar {
-    position: fixed;
-    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
-    z-index: 2;
-}
-
-h1.example-app-name {
-    margin-left: 8px;
-}
-
-.example-sidenav-container {
-    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
-       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
-    flex: 1;
-}
-
-.example-is-mobile .example-sidenav-container {
-    /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
-       `<body>` to be our scrolling element for mobile layouts. */
-    flex: 1 0 auto;
-}
-
-.sideNav-background {
-    background-color: rgb(0, 57, 78, 0.9);
-    color: white;
-}
-
-.activeSubTab {
-    background-color: rgb(0, 57, 78, 0.3) !important;
-    color: white !important;
-}
-
-.navbar-links a {
-    border-radius: 5px;
-}
-
-.test {
-    font-weight: bold !important;
-}
-
-#menu-button {
-    outline: none !important;
-}
-
-#Logout-icon {
-    width: 100%;
-    text-align: right;
-    vertical-align: middle;
-}
-
-#logOutLink {
-    font-size: 15px;
-    cursor: pointer;
-    margin-left: 12px;
-    border: solid 1px blue;
-    border-radius: 15px;
-    padding: 4px;
-    padding-right: 7px;
-    background-color: gray;
-    color: white;
-}
-
-#logOutLink:hover {
-    background-color: #007bff;
-}
-
-#logOUtMatIcon {
-    display: none;
-    padding-left: 22px !important;
-}
-
-#Logout-icon a mat-icon {
-    cursor: pointer;
-    background-color: gray;
-    border-radius: 50%;
-    text-align: center;
-}
-
-#Logout-icon a mat-icon:hover {
-    cursor: pointer;
-    background-color: gray;
-    border-radius: 50%;
-    text-align: center;
-    background-color: #007bff;
-}
-
-#Logout-icon mat-label {
-    font-size: 15px;
-}
-
-.companyDropdown {
-    font-size: 15px;
-    padding-top: 8px;
-    padding-right: 15px;
-    font-size: 15px;
-    width: 10px;
-    padding-left: 7px;
-}
-
-
 /* Movements section */
 
 .movements-mat-tab a {
     text-decoration: none !important;
-    border-radius: 5px;
+    color: #000;
+    border-bottom: solid 0.5px #000;
 }
 
-.movements-mat-tab a:hover {
-    border-radius: 5px;
+nav {
+    border-bottom: none !important;
+}
+
+.mat-tab-link {
+    opacity: 1 !important;
 }
 
 
@@ -262,6 +155,11 @@ h1.example-app-name {
 
 /* GLOBAL COMPONENTS*/
 
+mat-card {
+    margin: 15px;
+    background-color: rgb(252, 252, 252, 0.9) !important;
+}
+
 table {
     width: 100%;
 }
@@ -275,7 +173,7 @@ table {
 }
 
 .buttonsHeadersContainer {
-    text-align: right;
+    text-align: left;
 }
 
 .buttonsForms {
@@ -288,7 +186,7 @@ table {
 }
 
 .table-title {
-    color: #196012;
+    color: #09143C;
     font-weight: bold;
 }
 
@@ -381,6 +279,15 @@ table {
     color: red !important;
 }
 
+.activeSubTab {
+    background-color: rgb(3, 61, 89, 0.8) !important;
+    color: #fff !important;
+}
+
+.mat-card-subtitle {
+    margin-bottom: 0;
+}
+
 
 /* Checboxes color*/
 
@@ -435,8 +342,6 @@ mat-dialog-container {
 
 .globalContentForm {
     padding: 3px;
-    width: 100%;
-    padding-top: 20px;
 }
 
 .card-title {
@@ -476,37 +381,6 @@ mat-dialog-container {
 .confirmation-message {
     padding-right: 3px;
     padding-left: 3px;
-}
-
-
-/* HOME SECTION*/
-
-#home-intro-container {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-#mat-card-home {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-#home-intro-container p {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 50px;
-}
-
-#home-intro-container h3 {
-    font-weight: bold;
-    text-align: center;
-    color: black;
-}
-
-#home-intro-container embed {
-    width: 100%;
-    height: 600px;
-    margin-bottom: 10px;
 }
 
 
@@ -586,5 +460,8 @@ mat-dialog-container {
     }
     #income-statement-table {
         width: 100% !important;
+    }
+    mat-card {
+        margin: 5px;
     }
 }
