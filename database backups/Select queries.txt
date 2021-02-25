@@ -1,0 +1,6 @@
+/* Select the idCompany, Accounting Account Name and the total amount in a certain period */
+SELECT ac.IdCompany, ac.AccountName, SUM(TotalAmount) AS Total FROM [T_AccountingAccounts] ac
+  INNER JOIN [T_Expenses]  ex
+  ON ac.IdAccountingAccount = ex.IdAccountingAccount
+  WHERE ac.IdCompany = 1 AND (RegistrationDate > '2020-01-01' AND RegistrationDate < '2021-12-31') AND ac.IdAccountingAccount = 1246
+  GROUP BY ac.IdCompany, ac.AccountName
