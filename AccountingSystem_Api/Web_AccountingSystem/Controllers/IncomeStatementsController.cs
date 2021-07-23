@@ -79,7 +79,7 @@ namespace Web_AccountingSystem.Controllers
             var accountingAccountAllIncomes = await _context.AccountingAccounts
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountIncomeFirsCategory || a.IdAccountFirstCategory == idAccountExpenseFirsCategory)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             GetIncomeStatementViewModel[] accountingAccount = new GetIncomeStatementViewModel[accountingAccountAllIncomes.Count + 15]; // +15 that are the titles and subtitles
 
@@ -89,35 +89,35 @@ namespace Web_AccountingSystem.Controllers
                     .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                     .Where(a => a.IdAccountFirstCategory == idAccountIncomeFirsCategory)
                     .Where(a => a.IdAccountSecondCategory == idAccountIncomeSecondCategory1)
-                    .OrderBy(a => a.Code).ToListAsync();
+                    .OrderBy(a => a.AccountName).ToListAsync();
 
             // Get incomes Ventas/Otros Ingresos
             var accountingAccountIncomeOtherIncomes = await _context.AccountingAccounts
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountIncomeFirsCategory)
                 .Where(a => a.IdAccountSecondCategory == idAccountIncomeSecondCategory2)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             // Get Expenses Gastos/Gastos de ventas
             var accountingAccountExpenseSalesE = await _context.AccountingAccounts
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountExpenseFirsCategory)
                 .Where(a => a.IdAccountSecondCategory == idAccountExpenseSecondCategory1)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             // Get Expenses Gastos/Gastos Administrativos
             var accountingAccountExpenseAdmin = await _context.AccountingAccounts
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountExpenseFirsCategory)
                 .Where(a => a.IdAccountSecondCategory == idAccountExpenseSecondCategory2)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             // Get Expenses Gastos/Gastos Financieros
             var accountingAccountExpenseFin = await _context.AccountingAccounts
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountExpenseFirsCategory)
                 .Where(a => a.IdAccountSecondCategory == idAccountExpenseSecondCategory3)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             i = 0;
             totalIncomesSalesAmount = 0;

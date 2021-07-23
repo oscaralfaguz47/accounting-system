@@ -31,6 +31,7 @@ export class BalanceSheetComponent implements OnInit {
   public openingSeat = [];
   public finalDateMajor: boolean = false;
   public monthName;
+  public buttonLabelHideRows: string = 'Mostrar cuentas en ceros';
 
   constructor(private snackBar: MatSnackBar, private yearsMothsService: YearsMonthsService, private formBuilder: FormBuilder, private balanceSheetService: BalanceSheetService) {
     this.openingSeat = JSON.parse(localStorage.getItem('opseat'));
@@ -102,11 +103,25 @@ export class BalanceSheetComponent implements OnInit {
     }
 
   }
+  showAccountsWithoutAmount() {
+    var elements = document.getElementsByClassName('table-row');
+    for (var i = 0; i < elements.length; i++) {
+      console.log(elements[i].className);
+      if (elements[i].className.indexOf('hide') !== -1) {
+        this.buttonLabelHideRows = 'Ocultar cuentas en ceros';
+        elements[i].classList.remove('hide');
+      } else {
+        this.buttonLabelHideRows = 'Mostrar cuentas en ceros';
+        elements[i].classList.add('hide');
+      }
+    }
+  }
+
 
   downloadPdf() {
     if (this.displayTable) {
       let from = document.getElementById('report-title').textContent;
-      const printer = new PrintPdf('Balance de Situación '+ from +'.pdf', 'pdf-container');
+      const printer = new PrintPdf('Balance de Situación ' + from + '.pdf', 'pdf-container');
       printer.downloadPDF();
     } else {
       this.openSnackBar('No existen datos para descargar');

@@ -30,6 +30,7 @@ export class IncomeStatementComponent implements OnInit {
   public searchType = 'period';
   public finalDateMajor: boolean = false;
   public subtitleDate: string;
+  public buttonLabelHideRows: string = 'Mostrar cuentas en ceros';
 
 
 
@@ -72,6 +73,19 @@ export class IncomeStatementComponent implements OnInit {
     formDirective.resetForm();
   }
 
+  showAccountsWithoutAmount() {
+    var elements = document.getElementsByClassName('table-row');
+    for (var i = 0; i < elements.length; i++) {
+      console.log(elements[i].className);
+      if (elements[i].className.indexOf('hide') !== -1) {
+        this.buttonLabelHideRows = 'Ocultar cuentas en ceros';
+        elements[i].classList.remove('hide');
+      } else {
+        this.buttonLabelHideRows = 'Mostrar cuentas en ceros';
+        elements[i].classList.add('hide');
+      }
+    }
+  }
   getIncomeStatement(formDirective) {
     this.incomeStatementService.selectIncomeStatement(this.idCompany, this.searchType, this.initialDate, this.finalDate,
       this.month, this.year).subscribe((res: any) => {
