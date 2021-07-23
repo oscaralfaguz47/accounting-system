@@ -1,0 +1,22 @@
+CREATE TABLE T_AccountsPayable(
+IdAccountPayable INT PRIMARY KEY IDENTITY NOT NULL,
+IdCompany INT NOT NULL,
+RegistrationDate DATETIME NOT NULL,
+AccountingDate DATETIME NOT NULL,
+ModificationDate DATETIME,
+ExpirationDate DATETIME,
+IdProvider INT NOT NULL,
+TotalAmount decimal(22,2) NOT NULL,
+BalanceAmount decimal(22,2),
+Details NVARCHAR(150),
+AccountStatus BIT NOT NULL,
+Status BIT NOT NULL,
+IdExpense INT,
+)
+
+ALTER TABLE T_AccountsPayable ADD FOREIGN KEY (IdCompany) REFERENCES T_Companies(IdCompany);
+ALTER TABLE T_AccountsPayable ADD FOREIGN KEY (IdProvider) REFERENCES T_Providers(IdProvider);
+ALTER TABLE T_AccountsPayable ADD FOREIGN KEY (IdExpense) REFERENCES T_Expenses(IdExpense);
+
+ALTER TABLE [T_JournalSeats] ADD IdAccountPayable INT;
+ALTER TABLE T_JournalSeats ADD FOREIGN KEY (IdAccountPayable) REFERENCES T_AccountsPayable(IdAccountPayable);

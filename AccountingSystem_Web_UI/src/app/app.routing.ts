@@ -24,6 +24,7 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { IncomeStatementComponent } from './components/reports/income-statement/income-statement.component';
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
 import { NoOpeningSeatGuard } from './services/no-opening-seat.guard';
+import { AccountsPayableComponent } from './components/movements/accounts-payable/accounts-payable.component';
 
 // Guards
 
@@ -38,6 +39,7 @@ const APPROUTES: Routes = [
         path: 'movimientos', component: MovementsComponent, canActivate: [LoggedinGuard, NoCompaniesGuard, NoOpeningSeatGuard], children: [
             { path: 'registro-ventas', component: SalesRecordComponent, canActivate:[NoOpeningSeatGuard] },
             { path: 'registro-gastos', component: ExpenseRecordComponent, canActivate:[NoOpeningSeatGuard] },
+            { path: 'cuentas-por-pagar', component: AccountsPayableComponent, canActivate:[NoOpeningSeatGuard] },
             { path: 'asientos-ajustes', component: AdjustingEntriesComponent, canActivate:[NoOpeningSeatGuard] },
             { path: 'cierre-mensual', component: MonthlyClosingComponent, canActivate:[NoOpeningSeatGuard] },
             { path: '', redirectTo: 'registro-ventas', pathMatch: 'full' },

@@ -61,6 +61,7 @@ import { AlertMessageComponent } from './components/shared/alert-message/alert-m
 import { NoOpeningSeatGuard } from './services/no-opening-seat.guard';
 import { DataGlobalService } from './services/data-global.service';
 import { SpinnerLoadingComponent } from './components/shared/spinner-loading/spinner-loading.component';
+import { AccountsPayableComponent } from './components/movements/accounts-payable/accounts-payable.component';
 
 // const MY_DATE_FORMATS = {
 //   parse: {
@@ -120,7 +121,8 @@ export class AppDateAdapter extends NativeDateAdapter {
     BalanceSheetComponent,
     LoadingDialogComponent,
     AlertMessageComponent,
-    SpinnerLoadingComponent
+    SpinnerLoadingComponent,
+    AccountsPayableComponent
   ],
   entryComponents: [
     CreateCompanyComponent,
