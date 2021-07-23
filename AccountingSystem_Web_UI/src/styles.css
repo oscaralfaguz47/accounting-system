@@ -32,6 +32,17 @@ body {
 }
 
 
+/* Shared Classes */
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: revert;
+}
+
+
 /* LOGIN*/
 
 #user-background {
@@ -407,6 +418,7 @@ mat-dialog-container {
 
 .cell-title {
     font-weight: bold !important;
+    text-align: center !important;
 }
 
 .td-first {
@@ -421,6 +433,7 @@ mat-dialog-container {
 
 .cell-border {
     border-bottom: solid rgb(77, 124, 214, 0.6) 1px;
+    padding-left: 8%;
 }
 
 .statements-table {

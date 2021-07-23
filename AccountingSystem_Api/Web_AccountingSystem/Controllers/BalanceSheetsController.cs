@@ -132,7 +132,7 @@ namespace Web_AccountingSystem.Controllers
                 .Where(a => a.IdCompany == idCompany || a.IdCompany == null)
                 .Where(a => a.IdAccountFirstCategory == idAccountAssetFirsCategory)
                 .Where(a => a.IdAccountSecondCategory == idAccountAssetSecondCategory1)
-                .OrderBy(a => a.Code).ToListAsync();
+                .OrderBy(a => a.AccountName).ToListAsync();
 
             // Get Assets assets/Non Aurrent Assets
             var accountNoCurrentAssets = await _context.AccountingAccounts

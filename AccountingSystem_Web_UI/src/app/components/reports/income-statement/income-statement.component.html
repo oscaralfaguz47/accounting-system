@@ -56,6 +56,7 @@
                 <button class="btnCreate" type="submit" mat-button>Buscar</button> &nbsp;
                 <button (click)="downloadPdf()" matTooltip="Descargar en PDF" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
             </form>
+            <button *ngIf="displayTable" class="btnCreate" mat-button (click)="showAccountsWithoutAmount()">{{buttonLabelHideRows}}</button>
 
         </div>
 
@@ -72,8 +73,12 @@
 
             <table id="income-statement-table">
                 <br>
-                <tr *ngFor="let account of dataSource">
-                    <td class="td-first cell-border"><span>{{account.code}}</span></td>
+                <tr class="hide table-row" *ngFor="let account of dataSource" [ngClass]="{'show': account.amount != '0' || account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' ||
+                account.name == 'Total Ingresos de Ventas' || account.name == 'Otros ingresos' || account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS'
+                || account.name == 'GASTOS' || account.name == 'Gastos de ventas' || account.name == 'Total gastos de ventas' || account.name == 'Gastos administrativos'
+                || account.name == 'Total gastos administrativos' || account.name == 'Gastos financieros' || account.name == 'Total gastos financieros'
+                || account.name == 'TOTAL GASTOS' || account.name == 'UTILIDAD / PERDIDA'}">
+
                     <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'INGRESOS' || account.name == 'Ingresos de ventas' ||
                         account.name == 'Total Ingresos de Ventas' || account.name == 'Otros ingresos' || account.name == 'Total otros ingresos' || account.name == 'TOTAL INGRESOS'
                         || account.name == 'GASTOS' || account.name == 'Gastos de ventas' || account.name == 'Total gastos de ventas' || account.name == 'Gastos administrativos'

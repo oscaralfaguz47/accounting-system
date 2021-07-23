@@ -55,6 +55,7 @@
                 <button class="btnCreate" type="submit" mat-button>Buscar</button> &nbsp;
                 <button matTooltip="Descargar en PDF" (click)="downloadPdf()" class="btnCreate" type="button" mat-button><mat-icon>picture_as_pdf</mat-icon></button>
             </form>
+            <button *ngIf="displayTable" class="btnCreate" mat-button (click)="showAccountsWithoutAmount()">{{buttonLabelHideRows}}</button>
         </div>
 
         <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
@@ -69,8 +70,13 @@
 
             <table id="income-statement-table">
 
-                <tr *ngFor="let account of dataSource">
-                    <td class="td-first cell-border"><span>{{account.code}}</span></td>
+                <tr class="hide table-row" *ngFor="let account of dataSource" [ngClass]="{'show': account.amount != '0' || account.name == 'ACTIVO' || account.name == 'Activo Circulante'
+                || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
+                || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO'
+                || account.name == 'Pasivo circulante' || account.name == 'Total pasivo circulante' || account.name == 'Pasivo No Circulante'
+                || account.name == 'Total pasivo no circulante' || account.name == 'Otros Pasivos' || account.name == 'Total otros pasivos'
+                || account.name == 'Total Pasivos' || account.name == 'PATRIMONIO' || account.name == 'Total patrimonio'
+                || account.name == 'Total Pasivo y Patrimonio'}">
                     <td class="cell-border td-second"><span [ngClass]="{'cell-title': account.name == 'ACTIVO' || account.name == 'Activo Circulante'
                         || account.name == 'Total activo circulante'|| account.name == 'Activo No Circulante'|| account.name == 'Total activo no circulante'
                         || account.name == 'Otros Activos' || account.name == 'Total otros activos' || account.name == 'Total Activos' || account.name == 'PASIVO'
