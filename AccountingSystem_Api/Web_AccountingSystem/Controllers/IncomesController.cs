@@ -99,7 +99,7 @@ namespace Web_AccountingSystem.Controllers
             try
             {
                 _context.JournalSeats.Add(journalSeat);
-                await _context.SaveChangesAsync();
+               // await _context.SaveChangesAsync();
                 var idJournalSeat = journalSeat.IdJournalSeat;
                 var idCompany = model.IdCompany;
 

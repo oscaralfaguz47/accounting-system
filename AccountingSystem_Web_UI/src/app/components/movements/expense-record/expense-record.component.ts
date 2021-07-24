@@ -73,6 +73,7 @@ export class ExpenseRecordComponent implements OnInit {
   public invoiceAmount: number;
   public invoiceIva: number;
   public creditAccountId: number;
+  public creditDays: number = 10;
   public enabledDebitAccount: boolean = false;
   public banksIndex;
   public accountsReceivableIndex;
@@ -81,6 +82,7 @@ export class ExpenseRecordComponent implements OnInit {
   public creditAffectationIndex: number;
   public idExpense;
   public spinner: boolean = true;
+  public isCreditExpense: boolean;
 
 
   constructor(private router: Router, private journalMovementsService: JournalMovementsService,
@@ -202,7 +204,8 @@ export class ExpenseRecordComponent implements OnInit {
       totaAmount: [this.invoiceAmount, Validators.required],
       idD151: [this.invoiceIva, Validators.required],
       idMovementType: [this.condition, Validators.required],
-      creditAccount: [this.creditAccountId, Validators.required]
+      creditAccount: [this.creditAccountId, Validators.required],
+      creditDays: []
     });
   }
   enableDebitAccount() {
@@ -212,14 +215,18 @@ export class ExpenseRecordComponent implements OnInit {
       this.enabledDebitAccount = false;
     }
   }
-  changeDebitAccountToCash() {
+  changeDebitAccountToCash(condition) {
+    this.condition = condition;
+    this.isCreditExpense = false;
     const banksId = this.allAccounts[this.banksIndex].idAccountingAccount;
     const accountsReceivable = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
     if (this.creditAccountId === banksId || this.creditAccountId === accountsReceivable) {
       this.creditAccountId = this.allAccounts[this.banksIndex].idAccountingAccount;
     }
   }
-  changeDebitAccountToCredit() {
+  changeDebitAccountToCredit(condition) {
+    this.condition = condition;
+    this.isCreditExpense = true;
     const banksId = this.allAccounts[this.banksIndex].idAccountingAccount;
     const accountsReceivable = this.allAccounts[this.accountsReceivableIndex].idAccountingAccount;
     if (this.creditAccountId === banksId || this.creditAccountId === accountsReceivable) {
@@ -290,6 +297,7 @@ export class ExpenseRecordComponent implements OnInit {
         IVA: this.invoiceIva,
         IdD151: this.d151Option,
         IdMovementType: this.condition,
+        CreditDays : this.creditDays,
         JournalMovements: this.JournalMovements
       }
     } else {
@@ -304,6 +312,7 @@ export class ExpenseRecordComponent implements OnInit {
         IVA: this.invoiceIva,
         IdD151: this.d151Option,
         IdMovementType: this.condition,
+        CreditDays : this.creditDays,
         JournalMovements: this.JournalMovements
       };
 
