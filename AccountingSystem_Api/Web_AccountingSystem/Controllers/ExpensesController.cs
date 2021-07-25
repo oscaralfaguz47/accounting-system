@@ -62,6 +62,18 @@ namespace Web_AccountingSystem.Controllers
             }); ;
         }
 
+
+        // GET: api/Expenses/GetNumberOfRegisters
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetNumberOfRegisters(int idCompany)
+        {
+            var numberRegisters = await _context.Expenses
+               .Where(n => n.IdCompany == idCompany && n.Status == true)
+               .CountAsync();
+
+            return Ok(numberRegisters);
+        }
+
         // POST: api/Expenses/CreateExpense
         [HttpPost("[action]")]
         public async Task<ActionResult> CreateExpense([FromBody] CreateExpenseViewModel model)

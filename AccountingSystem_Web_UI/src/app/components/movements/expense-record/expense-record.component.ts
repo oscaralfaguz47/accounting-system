@@ -106,6 +106,7 @@ export class ExpenseRecordComponent implements OnInit {
     this.invoiceIva = 0;
     this.invoiceNumber = '';
     this.invoiceDetail = '';
+    this.getNumberOfRegisters();
     this.getExpenses();
     this.selectMovementTypes();
     this.selectAllAccounts();
@@ -113,6 +114,12 @@ export class ExpenseRecordComponent implements OnInit {
     this.selectD151Options();
     this.selectProviders();
     this.selectAccountAffectations();
+  }
+
+  getNumberOfRegisters() {
+    this.expensesService.selectNumberOfRegisters().subscribe((res: any) => {
+      console.log(res);
+    });
   }
   getExpenses() {
     this.expensesService.selectExpenses().subscribe((res: any) => {

@@ -15,55 +15,68 @@ export class ExpensesService {
     this.url = GLOBAL.url;
     this.idCompany = localStorage.getItem('idCompany');
     this.token = localStorage.getItem('token');
-   }
+  }
 
-   selectExpenses() {
+  selectExpenses() {
     const headersObject = new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.token,
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
     });
 
     const httpOptions = {
-        params: new HttpParams().set('idCompany', this.idCompany),
-        headers: headersObject,
+      params: new HttpParams().set('idCompany', this.idCompany),
+      headers: headersObject,
 
     };
     return this.http.get(this.url + 'Expenses/GetExpenses', httpOptions);
-}
-createExpense(dataToSend) {
-  const headersObject = new HttpHeaders({
+  }
+  selectNumberOfRegisters() {
+    const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
-  });
+    });
 
-  const httpOptions = {
+    const httpOptions = {
+      params: new HttpParams().set('idCompany', this.idCompany),
       headers: headersObject,
 
-  };
-  return this.http.post(this.url + 'Expenses/CreateExpense', dataToSend, httpOptions);
-}
-editExpense(dataToSend) {
-  const headersObject = new HttpHeaders({
+    };
+    return this.http.get(this.url + 'Expenses/GetNumberOfRegisters', httpOptions);
+  }
+  createExpense(dataToSend) {
+    const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
-  });
+    });
 
-  const httpOptions = {
+    const httpOptions = {
       headers: headersObject,
 
-  };
-  return this.http.put(this.url + 'Expenses/UpdateExpense', dataToSend, httpOptions);
-}
-deleteExpense(idExpense) {
-  console.log(idExpense);
-  const headersObject = new HttpHeaders({
+    };
+    return this.http.post(this.url + 'Expenses/CreateExpense', dataToSend, httpOptions);
+  }
+  editExpense(dataToSend) {
+    const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
-  });
-  const httpOptions = {
+    });
+
+    const httpOptions = {
+      headers: headersObject,
+
+    };
+    return this.http.put(this.url + 'Expenses/UpdateExpense', dataToSend, httpOptions);
+  }
+  deleteExpense(idExpense) {
+    console.log(idExpense);
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+    const httpOptions = {
       params: new HttpParams().set('idExpense', idExpense),
       headers: headersObject,
-  };
-  return this.http.put(this.url + 'Expenses/DeleteExpense', idExpense, httpOptions);
-}
+    };
+    return this.http.put(this.url + 'Expenses/DeleteExpense', idExpense, httpOptions);
+  }
 }

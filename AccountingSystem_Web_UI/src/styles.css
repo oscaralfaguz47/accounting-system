@@ -42,6 +42,10 @@ body {
     display: revert;
 }
 
+.pagination-container {
+    text-align: right;
+}
+
 
 /* LOGIN*/
 

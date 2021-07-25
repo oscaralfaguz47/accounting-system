@@ -1,0 +1,19 @@
+.redLabel {
+    background-color: red;
+    color: #fff;
+    padding: 4px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.greenLabel {
+    background-color: #19D139;
+    color: #fff;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.redText {
+    color: red;
+}
