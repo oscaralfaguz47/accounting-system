@@ -5,11 +5,13 @@
 
         <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span>
         </mat-card-subtitle>
+        <input style="width: 240px;" placeholder="Buscar por Proveedor o Detalle" type="text" id="accounts-payable-filter" (change)="filterAccountsPayable()" [(ngModel)]="filterInput">
 
     </mat-card>
     <mat-card>
-        <div class="table-responsive">
-            <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
+        <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
+        <div class="table-responsive" *ngIf="loadData">
+
             <table *ngIf="!spinner" mat-table [dataSource]="accountsPayableData" class="mat-elevation-z8">
 
                 <!-- Name Column -->
@@ -71,6 +73,9 @@
                             <a matTooltip="Editar" *ngIf="element.idExpense == null">
                                 <mat-icon>edit</mat-icon>
                             </a>
+                            <a *ngIf="element.accountStatus == true" (click)="openModal(element)" matTooltip="Saldar" data-toggle="modal" data-target="#pay-modal">
+                                <mat-icon>payment</mat-icon>
+                            </a>
 
                         </div>
                     </td>
@@ -80,10 +85,11 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
 
             </table>
-            <div class="pagination-container" *ngIf="!spinner">
+            <div class="pagination-container" *ngIf="accountsPayableData.length != 0 && !spinner">
                 <span>Registros por página: </span>
                 <select name="" id="" [(ngModel)]="defaultNumRegistersPerPage" (change)="changeItemPerPage()">
-                  <option value="15">15</option>
+          <option value="5">5</option>
+          <option value="15">15</option>
           <option value="30">30</option>
           <option value="50">50</option>
           <option value="100">100</option>
@@ -101,8 +107,49 @@
                 <p class="row justify-content-center text-danger">No existen registros</p>
             </div>
         </div>
-        <!--Create new Expenses-->
+
 
     </mat-card>
 
+</div>
+
+<!-- Modal -->
+<!-- Pay Account Payable-->
+<div class="modal fade" id="pay-modal" data-backdrop="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Saldar cuenta a: {{selectedAccount.provider}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <app-spinner-loading *ngIf="allAccounts.length === 0 || submitingData"></app-spinner-loading>
+                <div *ngIf="allAccounts.length > 0 && !submitingData">
+                    <p><strong>Monto Total CXP:</strong> ${{selectedAccount.totalAmount | number}}</p>
+                    <p><strong>Saldo actual:</strong> ${{selectedAccount.balanceAmount | number}}</p>
+                    <br>
+                    <span><strong>Detalle</strong></span>
+                    <textarea style="width: 100%;" cols="30" rows="3" [(ngModel)]="accountPayableDetails" maxlength="150"></textarea>
+                    <span><strong>Cuenta a acreditar</strong></span><br>
+                    <select [(ngModel)]="creditedAccount">
+            <option *ngFor="let option of allAccounts" [value]="option.idAccountingAccount">{{option.accountName}}</option>
+          </select>
+                    <div class="cancel-amount-cont1">
+                        <div class="cancel-amount-cont2">
+                            <p>Monto a cancelar</p>
+                            $ <input type="number" id="txtAmountToPay" [(ngModel)]="txtAmountToPay">
+                        </div>
+                        <span *ngIf="validationAmountGreater" class="text-danger">El monto a cancelar no puede ser mayor al saldo</span>
+                        <span *ngIf="validationMessage" class="text-danger">Todos los campos son requeridos</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button mat-button type="button" class="btnCreate" data-dismiss="modal">Cancelar</button>&nbsp;
+                <button [disabled]="submitingData" mat-button type="button" class="btnCreate" (click)="payAccountPayable()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
 </div>

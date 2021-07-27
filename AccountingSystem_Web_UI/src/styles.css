@@ -38,12 +38,41 @@ body {
     display: none;
 }
 
+.show-modal {
+    z-index: auto;
+}
+
 .show {
     display: revert;
 }
 
 .pagination-container {
     text-align: right;
+}
+
+
+/* Modal design */
+
+.modal-content {
+    border: none;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 1);
+}
+
+.modal-body .cancel-amount-cont1 {
+    text-align: -webkit-right;
+    margin-top: 10px;
+}
+
+.modal-body .cancel-amount-cont2 {
+    width: fit-content;
+    text-align: left;
+    margin-bottom: 0px;
+}
+
+.modal-body .cancel-amount-cont2 p {
+    font-weight: bold;
+    margin-bottom: 0 !important;
+    margin-top: 15px;
 }
 
 

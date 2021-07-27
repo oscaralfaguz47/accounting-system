@@ -20,3 +20,17 @@ ALTER TABLE T_AccountsPayable ADD FOREIGN KEY (IdExpense) REFERENCES T_Expenses(
 
 ALTER TABLE [T_JournalSeats] ADD IdAccountPayable INT;
 ALTER TABLE T_JournalSeats ADD FOREIGN KEY (IdAccountPayable) REFERENCES T_AccountsPayable(IdAccountPayable);
+
+CREATE TABLE T_AccountsPayableMovements(
+IdAccountPayableMovement INT PRIMARY KEY IDENTITY NOT NULL,
+IdAccountPayable INT NOT NULL,
+IdJournalSeat INT NOT NULL,
+RegistrationDate DATETIME NOT NULL,
+AppliedAmount decimal(22,2) NOT NULL,
+Details NVARCHAR(150)
+)
+ALTER TABLE T_AccountsPayableMovements ADD FOREIGN KEY (IdAccountPayable) REFERENCES T_AccountsPayable(IdAccountPayable);
+ALTER TABLE T_AccountsPayableMovements ADD FOREIGN KEY (IdJournalSeat) REFERENCES T_JournalSeats(IdJournalSeat);
+
+
+INSERT INTO T_Origins VALUES ('Cuentas por pagar')

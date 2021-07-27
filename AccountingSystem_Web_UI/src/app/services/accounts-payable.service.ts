@@ -47,4 +47,31 @@ export class AccountsPayableService {
     };
     return this.http.get(this.url + 'AccountsPayable/GetNumberOfRegisters', httpOptions);
   }
+  filterAccountsPayable(skipNumber, numberRegisters, criteria) {
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+    const httpOptions = {
+      params: new HttpParams()
+      .set('idCompany', this.idCompany)
+      .set('numberRegisters', numberRegisters)
+      .set('skipNumber', skipNumber)
+      .set('criteria', criteria),
+      headers: headersObject,
+    };
+    return this.http.get(this.url + 'AccountsPayable/FilterAccountsPayable', httpOptions);
+  }
+  payAccountPayable(dataToSend) {
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+
+    const httpOptions = {
+      headers: headersObject,
+
+    };
+    return this.http.post(this.url + 'AccountsPayable/PayAccountPayable', dataToSend, httpOptions);
+  }
 }
