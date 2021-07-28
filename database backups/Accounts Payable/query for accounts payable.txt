@@ -34,3 +34,5 @@ ALTER TABLE T_AccountsPayableMovements ADD FOREIGN KEY (IdJournalSeat) REFERENCE
 
 
 INSERT INTO T_Origins VALUES ('Cuentas por pagar')
+
+ALTER TABLE [T_Expenses] ADD AccountPayablePaid BIT;

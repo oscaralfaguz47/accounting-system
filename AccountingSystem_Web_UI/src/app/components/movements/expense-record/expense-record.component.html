@@ -67,14 +67,15 @@
                     <td class="tableCells" mat-cell *matCellDef="let element">
                         <div class="cell-icons">
 
-                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null">
+                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid">
                                 <mat-icon (click)="deleteExpense(element.idExpense)">delete</mat-icon>
                             </a>
-                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null" (click)="displayeEditPage(element)">
+                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid" (click)="displayeEditPage(element)">
                                 <mat-icon>edit</mat-icon>
                             </a>
                             <a>
-                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya cuenta con movimientos en cuentas por pagar" *ngIf="element.accountPayablePaid">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null && !element.accountPayablePaid">error_outline</mat-icon>
                             </a>
 
                         </div>

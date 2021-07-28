@@ -120,6 +120,12 @@ namespace Web_AccountingSystem.Controllers
             var origin = await _context.Origins.FirstOrDefaultAsync(i => i.Name == "Cuentas por pagar");
             int idOrigin = origin.IdOrigin;
             string movementDetail;
+            var expense = await _context.Expenses.Where(x => x.IdExpense == accountPayable.IdExpense).FirstOrDefaultAsync();
+            if (expense.AccountPayablePaid == false || expense.AccountPayablePaid == null)
+            {
+                expense.AccountPayablePaid = true;
+            }
+            
             if (model.AppliedAmount == accountPayable.BalanceAmount)
             {
                 accountPayable.BalanceAmount = 0;

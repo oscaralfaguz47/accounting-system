@@ -30,6 +30,7 @@ namespace Entities_AccountingSystem.Expenses
         public int IdMovementType { get; set; }
         [ForeignKey("IdMonthlyClosing")]
         public int? IdMonthlyClosing { get; set; }
+        public bool? AccountPayablePaid { get; set; }
 
         public Company Company { get; set; }
         public AccountingAccount AccountingAccount { get; set; }

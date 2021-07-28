@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AccountsPayableService } from '../../../services/accounts-payable.service';
 import { element } from 'protractor';
 import * as internal from 'assert';
-import { MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { AccountingAccoutsService } from 'src/app/services/accounting-accouts.service';
+import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
 
 declare  function closeModal(): any;
 
@@ -39,7 +40,8 @@ export class AccountsPayableComponent implements OnInit {
   constructor(
     private accountsPayableService: AccountsPayableService,
     private snackBar: MatSnackBar,
-    private accountingAccountService: AccountingAccoutsService) { }
+    private accountingAccountService: AccountingAccoutsService,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
     this.companyName = localStorage.getItem('companyName');
@@ -165,27 +167,40 @@ export class AccountsPayableComponent implements OnInit {
     } else {
       this.validationMessage = false;
       if(this.selectedAccount.balanceAmount >= this.txtAmountToPay){
-        this.submitingData = true;
-        this.validationAmountGreater = false;
-        this.accountsPayableService.payAccountPayable(dataToSend).subscribe((response) => {
-          this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
-          this.submitingData = false;
-          closeModal();
-          this.openSnackBar('¡Movimiento realizado correctamente!');
-        }, err => {
-          this.openSnackBar('¡Error de servidor!');
-          console.log(err);
-        });
+      this.openConfirmationMessage(dataToSend);
       } else {
         this.validationAmountGreater = true;
         this.validationMessage = false;
       }
     }
   }
-
+completePayment(dataToSend){
+  this.submitingData = true;
+  this.validationAmountGreater = false;
+  this.accountsPayableService.payAccountPayable(dataToSend).subscribe((response) => {
+    this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+    this.submitingData = false;
+    closeModal();
+    this.openSnackBar('¡Movimiento realizado correctamente!');
+  }, err => {
+    this.openSnackBar('¡Error de servidor!');
+    console.log(err);
+  });
+}
   openSnackBar(message) {
     this.snackBar.openFromComponent(SnackBarSavedChangesComponent, {
       data: { message: message }, duration: 2000,
+    });
+  }
+
+  openConfirmationMessage(dataToSend): void {
+    const dialogRef = this.dialog.open(ConfirmationMessageComponent, {
+      data: { 'title': 'Realizar Pago', 'description': '¿Deseas realizar el pago?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.completePayment(dataToSend);
+      }
     });
   }
 

@@ -58,7 +58,8 @@ namespace Web_AccountingSystem.Controllers
                 D151Name = i.D151Option.Name,
                 IdMovementType = i.IdMovementType,
                 MovementTypeName = i.MovementType.Name,
-                IdMonthlyClosing = i.IdMonthlyClosing
+                IdMonthlyClosing = i.IdMonthlyClosing,
+                AccountPayablePaid = i.AccountPayablePaid
             }); ;
         }
 
@@ -181,7 +182,8 @@ namespace Web_AccountingSystem.Controllers
                     TotalAmount = model.TotalAmount,
                     Status = true,
                     IdD151 = model.IdD151,
-                    IdMovementType = model.IdMovementType
+                    IdMovementType = model.IdMovementType,
+                    AccountPayablePaid = false
                 };
 
                 _context.Expenses.Add(expense);
