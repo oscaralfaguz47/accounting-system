@@ -4,7 +4,8 @@
         <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
         <mat-card-title class="table-title">Gastos</mat-card-title>
 
-        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span>
+        </mat-card-subtitle>
         <div class="buttonsHeadersContainer">
             <button *ngIf="!isCreatingExpense" class="btnCreate" (click)="displayCreateExpense()" mat-button>Agregar</button>
         </div>
@@ -37,7 +38,8 @@
 
                 <ng-container matColumnDef="date">
                     <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha </th>
-                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.registrationDate | date:'dd/MM/yyyy'}} </td>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.registrationDate | date:'dd/MM/yyyy'}}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="totalAmount">
@@ -65,14 +67,15 @@
                     <td class="tableCells" mat-cell *matCellDef="let element">
                         <div class="cell-icons">
 
-                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null">
+                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid">
                                 <mat-icon (click)="deleteExpense(element.idExpense)">delete</mat-icon>
                             </a>
-                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null" (click)="displayeEditPage(element)">
+                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid" (click)="displayeEditPage(element)">
                                 <mat-icon>edit</mat-icon>
                             </a>
                             <a>
-                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya cuenta con movimientos en cuentas por pagar" *ngIf="element.accountPayablePaid">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null && !element.accountPayablePaid">error_outline</mat-icon>
                             </a>
 
                         </div>
@@ -105,7 +108,8 @@
                             <input name="registrationDate" matInput [matDatepicker]="picker" [(ngModel)]="registrationDate" formControlName="registrationDate">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
-                            <mat-error *ngIf="expensesForm.get('registrationDate').hasError('required')">La fecha es requerida</mat-error>
+                            <mat-error *ngIf="expensesForm.get('registrationDate').hasError('required')">La fecha es requerida
+                            </mat-error>
                         </mat-form-field> &nbsp;
 
                         <mat-form-field (click)="validateExistsExpensesAccounts()">
@@ -132,10 +136,10 @@
                         <div>
                             <label id="example-radio-group-label">Condición del gasto</label> <br>
                             <mat-radio-group [(ngModel)]="condition" aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="idMovementType">
-                                <mat-radio-button (click)="changeDebitAccountToCash()" class="example-radio-button" [checked]="condition == movementTypes[indexDebitMovementType]" [value]="movementTypes[0].idMovementType">
+                                <mat-radio-button (click)="changeDebitAccountToCash(movementTypes[0].idMovementType)" class="example-radio-button" [value]="movementTypes[0].idMovementType">
                                     {{movementTypes[0].name}} &nbsp;
                                 </mat-radio-button>
-                                <mat-radio-button (click)="changeDebitAccountToCredit()" class="example-radio-button" [checked]="condition == movementTypes[indexCreditMovementType]" [value]="movementTypes[1].idMovementType">
+                                <mat-radio-button (click)="changeDebitAccountToCredit(movementTypes[1].idMovementType)" class="example-radio-button" [value]="movementTypes[1].idMovementType">
                                     {{movementTypes[1].name}} &nbsp;
                                 </mat-radio-button>
                             </mat-radio-group>&nbsp;
@@ -147,10 +151,25 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field> &nbsp;
-                            <div id="change-debit-account-btn">
-                                <a (click)="enableDebitAccount()">Cambiar cuenta a creditar <span  matTooltip='Habilita la opción "Cuenta a debitar" para elegir otra opción' class="material-icons">
-                                    info
-                                    </span></a>
+                            <mat-form-field *ngIf="isCreditExpense">
+                                <mat-label>Días de Crédito</mat-label>
+                                <mat-select name="creditDays" formControlName="creditDays" [(ngModel)]="creditDays">
+                                    <mat-option [value]="5">5 Días</mat-option>
+                                    <mat-option [value]="10">10 Días</mat-option>
+                                    <mat-option [value]="15">15 Días</mat-option>
+                                    <mat-option [value]="20">20 Días</mat-option>
+                                    <mat-option [value]="25">25 Días</mat-option>
+                                    <mat-option [value]="30">30 Días</mat-option>
+                                    <mat-option [value]="60">60 Días</mat-option>
+                                    <mat-option [value]="90">90 Días</mat-option>
+                                </mat-select>
+                            </mat-form-field> &nbsp;
+
+                            <div id="change-debit-account-btn" *ngIf="!isCreditExpense">
+                                <a (click)="enableDebitAccount()">Cambiar cuenta a creditar <span
+                    matTooltip='Habilita la opción "Cuenta a debitar" para elegir otra opción' class="material-icons">
+                    info
+                  </span></a>
                             </div>
                         </div>
                         <mat-form-field class="example-full-width">

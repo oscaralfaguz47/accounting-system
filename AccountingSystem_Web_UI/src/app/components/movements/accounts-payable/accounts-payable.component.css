@@ -1,0 +1,25 @@
+.redLabel {
+    background-color: #F01717;
+    color: #fff;
+    padding: 4px 8px 4px 8px;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 25px;
+}
+
+.greenLabel {
+    background-color: #229818;
+    color: #fff;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 25px;
+}
+
+.redText {
+    color: red;
+}
+
+
+/* Pay Modal */

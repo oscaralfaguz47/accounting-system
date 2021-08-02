@@ -1,4 +1,5 @@
-﻿using Entities_AccountingSystem.Companies;
+﻿using Entities_AccountingSystem.AccountsPayable;
+using Entities_AccountingSystem.Companies;
 using Entities_AccountingSystem.JournalMovements;
 using Entities_AccountingSystem.MonthlyClosings;
 using Entities_AccountingSystem.Origins;
@@ -21,10 +22,12 @@ namespace Entities_AccountingSystem.JournalSeats
         [ForeignKey("IdMonthlyClosing")]
         public int? IdMonthlyClosing { get; set; }
         public int SeatNumber { get; set; }
+        public int? IdAccountPayable { get; set; }
 
         public ICollection<JournalMovement> JournalMovements { get; set; }
         public Origin Origin { get; set; }
         public Company Company { get; set; }
         public MonthlyClosing MonthlyClosing { get; set; }
+        public AccountPayable AccountPayable { get; set; }
     }
 }

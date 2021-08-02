@@ -24,5 +24,6 @@ namespace Web_AccountingSystem.Models.Expenses
         public int IdMovementType { get; set; }
         public string MovementTypeName { get; set; }
         public int? IdMonthlyClosing { get; set; }
+        public bool? AccountPayablePaid { get; set; }
     }
 }
