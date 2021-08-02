@@ -17,16 +17,17 @@ export class AccountsPayableService {
     this.token = localStorage.getItem('token');
   }
 
-  selectAccountsPayable(skipNumber, numberRegisters) {
+  selectAccountsPayable(skipNumber, numberRegisters, criteria) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
     });
     const httpOptions = {
       params: new HttpParams()
-      .set('idCompany', this.idCompany)
-      .set('numberRegisters', numberRegisters)
-      .set('skipNumber', skipNumber),
+        .set('idCompany', this.idCompany)
+        .set('numberRegisters', numberRegisters)
+        .set('skipNumber', skipNumber)
+        .set('criteria', criteria),
       headers: headersObject,
     };
     return this.http.get(this.url + 'AccountsPayable/GetAccountsPayable', httpOptions);
@@ -41,23 +42,38 @@ export class AccountsPayableService {
 
     const httpOptions = {
       params: new HttpParams()
-      .set('idCompany', this.idCompany),
+        .set('idCompany', this.idCompany),
       headers: headersObject,
 
     };
     return this.http.get(this.url + 'AccountsPayable/GetNumberOfRegisters', httpOptions);
   }
-  filterAccountsPayable(skipNumber, numberRegisters, criteria) {
+  selectNumberOfRegistersWhenFilter(criteria) {
+
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+
+    const httpOptions = {
+      params: new HttpParams()
+        .set('idCompany', this.idCompany)
+        .set('criteria', criteria),
+      headers: headersObject,
+
+    };
+    return this.http.get(this.url + 'AccountsPayable/GetNumberOfRegistersWhenFilter', httpOptions);
+  }
+  filterAccountsPayable(numberRegisters, criteria) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
     });
     const httpOptions = {
       params: new HttpParams()
-      .set('idCompany', this.idCompany)
-      .set('numberRegisters', numberRegisters)
-      .set('skipNumber', skipNumber)
-      .set('criteria', criteria),
+        .set('idCompany', this.idCompany)
+        .set('numberRegisters', numberRegisters)
+        .set('criteria', criteria),
       headers: headersObject,
     };
     return this.http.get(this.url + 'AccountsPayable/FilterAccountsPayable', httpOptions);

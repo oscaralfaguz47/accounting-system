@@ -86,13 +86,11 @@
 
             </table>
             <div class="pagination-container" *ngIf="accountsPayableData.length != 0 && !spinner">
-                <span>Registros por página: </span>
                 <select name="" id="" [(ngModel)]="defaultNumRegistersPerPage" (change)="changeItemPerPage()">
-          <option value="5">5</option>
-          <option value="15">15</option>
           <option value="30">30</option>
           <option value="50">50</option>
           <option value="100">100</option>
+          <option value="100">300</option>
         </select>
                 <span>{{paginationFirstNumber}} - {{paginationSecondNumber}} de {{numberOfRegisters}}</span>
                 <button (click)="pagination('left')" [disabled]="paginationFirstNumber === 1"><i class="fa fa-chevron-left"
@@ -134,14 +132,16 @@
                     <textarea style="width: 100%;" cols="30" rows="3" [(ngModel)]="accountPayableDetails" maxlength="150"></textarea>
                     <span><strong>Cuenta a acreditar</strong></span><br>
                     <select [(ngModel)]="creditedAccount">
-            <option *ngFor="let option of allAccounts" [value]="option.idAccountingAccount">{{option.accountName}}</option>
+            <option *ngFor="let option of allAccounts" [value]="option.idAccountingAccount">{{option.accountName}}
+            </option>
           </select>
                     <div class="cancel-amount-cont1">
                         <div class="cancel-amount-cont2">
                             <p>Monto a cancelar</p>
                             $ <input type="number" id="txtAmountToPay" [(ngModel)]="txtAmountToPay">
                         </div>
-                        <span *ngIf="validationAmountGreater" class="text-danger">El monto a cancelar no puede ser mayor al saldo</span>
+                        <span *ngIf="validationAmountGreater" class="text-danger">El monto a cancelar no puede ser mayor al
+              saldo</span>
                         <span *ngIf="validationMessage" class="text-danger">Todos los campos son requeridos</span>
                     </div>
                 </div>

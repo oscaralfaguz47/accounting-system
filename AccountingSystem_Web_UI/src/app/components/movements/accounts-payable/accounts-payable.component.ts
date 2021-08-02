@@ -22,7 +22,7 @@ export class AccountsPayableComponent implements OnInit {
   paginationSecondNumber: number;
   defaultNumRegistersPerPage: number;
   skipNumber: number;
-  filterInput: string;
+  filterInput: string = '';
   loadData: boolean;
   public spinner: boolean = true;
   public companyName: string;
@@ -47,12 +47,18 @@ export class AccountsPayableComponent implements OnInit {
     this.companyName = localStorage.getItem('companyName');
     this.getNumberOfRegisters();
     this.skipNumber = 0;
-    this.defaultNumRegistersPerPage = 15;
-    this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+    this.defaultNumRegistersPerPage = 30;
+    this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, '');
   }
   getNumberOfRegisters() {
     this.accountsPayableService.selectNumberOfRegisters().subscribe((res: any) => {
       this.numberOfRegisters = null;
+      this.numberOfRegisters = res;
+      this.initializePaginator();
+    });
+  }
+  getNumberOfRegistersWhenFilter(criteria) {
+    this.accountsPayableService.selectNumberOfRegistersWhenFilter(criteria).subscribe((res: any) => {
       this.numberOfRegisters = res;
       this.initializePaginator();
     });
@@ -64,31 +70,33 @@ export class AccountsPayableComponent implements OnInit {
       this.creditedAccount = this.allAccounts[bankIndex].idAccountingAccount;
     });
   }
-  getAccountsPayable(skipNumber, numberRegisters) {
-    this.accountsPayableService.selectAccountsPayable(skipNumber, numberRegisters).subscribe((res: any) => {
+  getAccountsPayable(skipNumber, numberRegisters, criteria) {
+    this.accountsPayableService.selectAccountsPayable(skipNumber, numberRegisters, criteria).subscribe((res: any) => {
+      this.accountsPayableData = res;
+      console.log(this.accountsPayableData);
+      this.loadData = true;
+      this.spinner = false;
+    });
+  }
+  getAccountsPayableWhenFilter() {
+    this.accountsPayableService.filterAccountsPayable(this.defaultNumRegistersPerPage, this.filterInput).subscribe((res: any) => {
+      this.accountsPayableData = [];
       this.accountsPayableData = res;
       this.loadData = true;
       this.spinner = false;
     });
   }
-  getAccountsPayableWhenFilter(skipNumber, numberRegisters, criteria) {
-    this.accountsPayableService.filterAccountsPayable(skipNumber, numberRegisters, criteria).subscribe((res: any) => {
-      this.accountsPayableData = res;
-      this.numberOfRegisters = this.accountsPayableData.length;
-      this.initializePaginator();
-
-    });
-  }
   filterAccountsPayable() {
+    this.skipNumber = 0;
     this.spinner = true;
+    this.loadData = false;
     if (this.filterInput.trim() === '') {
       this.changeItemPerPage();
     } else {
-      this.skipNumber = 0;
-      this.getAccountsPayableWhenFilter(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
-      this.spinner = false;
+      console.log('aquíiiiiiiiii');
+      this.getNumberOfRegistersWhenFilter(this.filterInput.trim());
+      this.getAccountsPayable(0, this.defaultNumRegistersPerPage, this.filterInput.trim());
     }
-
   }
   pagination(button) {
     this.spinner = true;
@@ -106,7 +114,12 @@ export class AccountsPayableComponent implements OnInit {
         }
       }
       this.skipNumber = Number(this.skipNumber) - Number(this.defaultNumRegistersPerPage);
-      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+      if (this.filterInput === '' || this.filterInput === undefined) {
+        this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, '');
+      } else {
+        this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
+      }
+
     } else {
       if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
         this.paginationFirstNumber = Number(this.paginationFirstNumber) + Number(this.defaultNumRegistersPerPage);
@@ -121,7 +134,11 @@ export class AccountsPayableComponent implements OnInit {
         }
       }
       this.skipNumber = Number(this.skipNumber) + Number(this.defaultNumRegistersPerPage);
-      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+      if (this.filterInput === '' || this.filterInput === undefined) {
+        this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, '');
+      } else {
+        this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
+      }
     }
   }
 
@@ -134,15 +151,19 @@ export class AccountsPayableComponent implements OnInit {
       if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
       }
     }
+
   }
   changeItemPerPage() {
-    if (this.filterInput === '' || this.filterInput === undefined) {
+    this.loadData = false;
+      this.spinner = true;
+    if (this.filterInput.trim() === '' || this.filterInput.trim() === undefined) {
       this.getNumberOfRegisters();
-      this.skipNumber = 0;
-      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+    this.skipNumber = 0;
+      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, '');
     } else {
-      this.skipNumber = 0;
-      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+      this.getNumberOfRegistersWhenFilter(this.filterInput.trim());
+    this.skipNumber = 0;
+      this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
     }
   }
   openModal(element) {
@@ -178,7 +199,7 @@ completePayment(dataToSend){
   this.submitingData = true;
   this.validationAmountGreater = false;
   this.accountsPayableService.payAccountPayable(dataToSend).subscribe((response) => {
-    this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage);
+    this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
     this.submitingData = false;
     closeModal();
     this.openSnackBar('¡Movimiento realizado correctamente!');

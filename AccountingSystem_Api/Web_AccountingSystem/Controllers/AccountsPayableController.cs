@@ -30,13 +30,26 @@ namespace Web_AccountingSystem.Controllers
 
         // GET: api/AccountsPayable/GetAccountsPayable
         [HttpGet("[action]")]
-        public async Task<IEnumerable<SelectAccountPayableViewModel>> GetAccountsPayable(int idCompany, int skipNumber, int numberRegisters)
+        public async Task<IEnumerable<SelectAccountPayableViewModel>> GetAccountsPayable(int idCompany, int skipNumber, int numberRegisters, string criteria)
         {
-            var accountPayable = await _context.AccountsPayable
+            List<AccountPayable> accountPayable;
+            if (criteria == null)
+            {
+                accountPayable = await _context.AccountsPayable
                 .Include(i => i.Provider)
                 .Where(i => i.IdCompany == idCompany)
                 .Where(i => i.Status == true)
                 .OrderBy(i => i.AccountStatus == false).ThenBy(i => i.ExpirationDate).Skip(skipNumber).Take(numberRegisters).ToListAsync();
+            } else
+            {
+                accountPayable = await _context.AccountsPayable
+                .Include(i => i.Provider)
+                .Where(i => i.IdCompany == idCompany)
+                .Where(i => i.Status == true)
+                .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim()))
+                .OrderBy(i => i.AccountStatus == false).ThenBy(i => i.ExpirationDate).Skip(skipNumber).Take(numberRegisters).ToListAsync();
+            }
+            
             return accountPayable.Select(i => new SelectAccountPayableViewModel
             {
                 IdAccountPayable = i.IdAccountPayable,
@@ -66,16 +79,28 @@ namespace Web_AccountingSystem.Controllers
             return Ok(numberRegisters);
         }
 
+        // GET: api/AccountsPayable/GetNumberOfRegistersWhenFilter
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetNumberOfRegistersWhenFilter(int idCompany, string criteria)
+        {
+            var numberRegisters = await _context.AccountsPayable
+               .Where(n => n.IdCompany == idCompany && n.Status == true)
+               .Where(i => i.Provider.Name.Contains(criteria) || i.Details.Contains(criteria))
+               .CountAsync();
+
+            return Ok(numberRegisters);
+        }
+
         // GET: api/AccountsPayable/FilterAccountsPayable
         [HttpGet("[action]")]
-        public async Task<IEnumerable<SelectAccountPayableViewModel>> FilterAccountsPayable(int idCompany, int skipNumber, int numberRegisters, string criteria)
+        public async Task<IEnumerable<SelectAccountPayableViewModel>> FilterAccountsPayable(int idCompany, int numberRegisters, string criteria)
         {
             var accountPayable = await _context.AccountsPayable
                 .Include(i => i.Provider)
                 .Where(i => i.IdCompany == idCompany)
                 .Where(i => i.Status == true)
                 .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim()))
-                .OrderBy(i => i.AccountStatus == false).ThenBy(i => i.ExpirationDate).Skip(skipNumber).Take(numberRegisters).ToListAsync();
+                .OrderBy(i => i.AccountStatus == false).ThenBy(i => i.ExpirationDate).Take(numberRegisters).ToListAsync();
             return accountPayable.Select(i => new SelectAccountPayableViewModel
             {
                 IdAccountPayable = i.IdAccountPayable,
