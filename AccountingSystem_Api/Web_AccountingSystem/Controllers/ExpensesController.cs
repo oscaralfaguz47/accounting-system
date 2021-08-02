@@ -29,17 +29,45 @@ namespace Web_AccountingSystem.Controllers
 
         // GET: api/Expenses/GetExpenses
         [HttpGet("[action]")]
-        public async Task<IEnumerable<SelectExpenseViewModel>> GetExpenses(int idCompany)
+        public async Task<IEnumerable<SelectExpenseViewModel>> GetExpenses(int idCompany, int skipNumber, int numberRegisters, string criteria)
         {
-            var expense = await _context.Expenses
-                .Include(i => i.AccountingAccount)
-                .Include(i => i.JournalSeat)
-                .Include(i => i.Provider)
-                .Include(i => i.D151Option)
-                .Include(i => i.MovementType)
-                .Where(i => i.IdCompany == idCompany)
-                .Where(i => i.Status == true)
-                .OrderByDescending(i => i.RegistrationDate).ToListAsync();
+            List<Expense> expense;
+
+            if (criteria == null)
+            {
+                expense = await _context.Expenses
+               .Include(i => i.AccountingAccount)
+               .Include(i => i.JournalSeat)
+               .Include(i => i.Provider)
+               .Include(i => i.D151Option)
+               .Include(i => i.MovementType)
+               .Where(i => i.IdCompany == idCompany)
+               .Where(i => i.Status == true)
+               .OrderByDescending(i => i.RegistrationDate)
+               .Skip(skipNumber)
+               .Take(numberRegisters)
+               .ToListAsync();
+            } else
+            {
+                expense = await _context.Expenses
+              .Include(i => i.AccountingAccount)
+              .Include(i => i.JournalSeat)
+              .Include(i => i.Provider)
+              .Include(i => i.D151Option)
+              .Include(i => i.MovementType)
+              .Where(i => i.IdCompany == idCompany)
+              .Where(i => i.Status == true)
+              .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim()) 
+              || i.MovementType.Name.Contains(criteria.Trim()) || i.D151Option.Name.Contains(criteria.Trim()) 
+              || i.AccountingAccount.AccountName.Contains(criteria.Trim()) 
+              || i.Voucher.Contains(criteria.Trim())) 
+              .OrderByDescending(i => i.RegistrationDate)
+              .Skip(skipNumber)
+              .Take(numberRegisters)
+              .ToListAsync();
+            }
+
+               
             return expense.Select(i => new SelectExpenseViewModel
             {
                 IdExpense = i.IdExpense,
@@ -66,14 +94,27 @@ namespace Web_AccountingSystem.Controllers
 
         // GET: api/Expenses/GetNumberOfRegisters
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetNumberOfRegisters(int idCompany)
+        public async Task<IActionResult> GetNumberOfRegisters(int idCompany, string criteria)
         {
-            var numberRegisters = await _context.Expenses
+            int numberRegisters = 0;
+            if (criteria == null)
+            {
+                numberRegisters = await _context.Expenses
                .Where(n => n.IdCompany == idCompany && n.Status == true)
                .CountAsync();
-
+            } else
+            {
+                numberRegisters = await _context.Expenses
+             .Where(n => n.IdCompany == idCompany && n.Status == true)
+             .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim())
+              || i.MovementType.Name.Contains(criteria.Trim()) || i.D151Option.Name.Contains(criteria.Trim())
+              || i.AccountingAccount.AccountName.Contains(criteria.Trim())
+              || i.Voucher.Contains(criteria.Trim()))
+             .CountAsync();
+            }
             return Ok(numberRegisters);
         }
+
 
         // POST: api/Expenses/CreateExpense
         [HttpPost("[action]")]

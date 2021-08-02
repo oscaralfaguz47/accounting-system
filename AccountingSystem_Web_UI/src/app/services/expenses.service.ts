@@ -17,32 +17,37 @@ export class ExpensesService {
     this.token = localStorage.getItem('token');
   }
 
-  selectExpenses() {
+  selectExpenses(skipNumber, numberRegisters, criteria) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
     });
 
     const httpOptions = {
-      params: new HttpParams().set('idCompany', this.idCompany),
+      params: new HttpParams()
+        .set('idCompany', this.idCompany)
+        .set('numberRegisters', numberRegisters)
+        .set('skipNumber', skipNumber)
+        .set('criteria', criteria),
       headers: headersObject,
 
     };
     return this.http.get(this.url + 'Expenses/GetExpenses', httpOptions);
   }
-  selectNumberOfRegisters() {
+  selectNumberOfRegisters(criteria) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
     });
-
     const httpOptions = {
-      params: new HttpParams().set('idCompany', this.idCompany),
+      params: new HttpParams()
+      .set('idCompany', this.idCompany)
+      .set('criteria', criteria),
       headers: headersObject,
-
     };
     return this.http.get(this.url + 'Expenses/GetNumberOfRegisters', httpOptions);
   }
+
   createExpense(dataToSend) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',

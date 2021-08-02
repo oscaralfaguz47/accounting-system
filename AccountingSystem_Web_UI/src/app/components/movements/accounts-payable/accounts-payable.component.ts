@@ -73,7 +73,6 @@ export class AccountsPayableComponent implements OnInit {
   getAccountsPayable(skipNumber, numberRegisters, criteria) {
     this.accountsPayableService.selectAccountsPayable(skipNumber, numberRegisters, criteria).subscribe((res: any) => {
       this.accountsPayableData = res;
-      console.log(this.accountsPayableData);
       this.loadData = true;
       this.spinner = false;
     });
@@ -151,7 +150,6 @@ export class AccountsPayableComponent implements OnInit {
       if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
       }
     }
-
   }
   changeItemPerPage() {
     this.loadData = false;

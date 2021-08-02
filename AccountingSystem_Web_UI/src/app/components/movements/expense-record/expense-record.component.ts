@@ -12,8 +12,6 @@ import { ConfirmationMessageComponent } from '../../shared/confirmation-message/
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { AlertMessageComponent } from '../../shared/alert-message/alert-message.component';
 import { Router } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -30,18 +28,6 @@ export class ExpenseRecordComponent implements OnInit {
   expensesDataSource: any = [];
   public data = [];
 
-  @ViewChild(MatPaginator, {static: false})
-  set paginator(value: MatPaginator) {
-    if (this.expensesDataSource){
-      this.expensesDataSource.paginator = value;
-    }
-  }
-  @ViewChild(MatSort, {static: false})
-  set sort(value: MatSort) {
-    if (this.expensesDataSource){
-      this.expensesDataSource.sort = value;
-    }
-  }
   test: boolean;
   public title: string;
   public idCompany;
@@ -83,7 +69,13 @@ export class ExpenseRecordComponent implements OnInit {
   public idExpense;
   public spinner: boolean = true;
   public isCreditExpense: boolean;
-
+  numberOfRegisters: number;
+  paginationFirstNumber: number;
+  paginationSecondNumber: number;
+  defaultNumRegistersPerPage: number;
+  skipNumber: number;
+  filterInput: string = '';
+  loadData: boolean;
 
   constructor(private router: Router, private journalMovementsService: JournalMovementsService,
     private accountAffectationsService: AccountAffectationsService,
@@ -93,11 +85,6 @@ export class ExpenseRecordComponent implements OnInit {
     private d151Service: D151Service, private accountingAccountsService: AccountingAccoutsService,
     private expensesService: ExpensesService, public dialog: MatDialog, private formBuilder: FormBuilder) { }
 
-    ngAfterViewInit() {
-      this.expensesDataSource.paginator = this.paginator;
-      this.expensesDataSource.sort = this.sort;
-    }
-
   ngOnInit() {
 
     this.expensesFormGroup();
@@ -106,8 +93,10 @@ export class ExpenseRecordComponent implements OnInit {
     this.invoiceIva = 0;
     this.invoiceNumber = '';
     this.invoiceDetail = '';
-    this.getNumberOfRegisters();
-    this.getExpenses();
+    this.getNumberOfRegisters('');
+    this.skipNumber = 0;
+    this.defaultNumRegistersPerPage = 20;
+    this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
     this.selectMovementTypes();
     this.selectAllAccounts();
     this.selectExpensesAccountingAccount();
@@ -116,22 +105,32 @@ export class ExpenseRecordComponent implements OnInit {
     this.selectAccountAffectations();
   }
 
-  getNumberOfRegisters() {
-    this.expensesService.selectNumberOfRegisters().subscribe((res: any) => {
+  getNumberOfRegisters(criteria) {
+    this.expensesService.selectNumberOfRegisters(criteria).subscribe((res: any) => {
       console.log(res);
+      this.numberOfRegisters = null;
+      this.numberOfRegisters = res;
+      this.initializePaginator();
     });
   }
-  getExpenses() {
-    this.expensesService.selectExpenses().subscribe((res: any) => {
+  initializePaginator() {
+    this.paginationFirstNumber = 1;
+    if (this.numberOfRegisters / this.defaultNumRegistersPerPage < 1) {
+      this.paginationSecondNumber = this.numberOfRegisters;
+    } else {
+      this.paginationSecondNumber = this.defaultNumRegistersPerPage;
+      if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
+      }
+    }
+  }
+  getExpenses(skipNumber, numberRegisters, criteria) {
+    this.expensesService.selectExpenses(skipNumber, numberRegisters, criteria).subscribe((res: any) => {
       this.data = res;
-      this.expensesDataSource = new MatTableDataSource(res);
+      this.expensesDataSource = res;
       this.spinner = false;
       this.progressBar = false;
+      this.loadData = true;
     });
-  }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.expensesDataSource.filter = filterValue.trim().toLowerCase();
   }
 
   inicialize() {
@@ -333,7 +332,7 @@ export class ExpenseRecordComponent implements OnInit {
     this.expensesService.createExpense(this.dataToSend).subscribe((response) => {
       this.isCreatingExpense = false;
       this.inicialize();
-      this.getExpenses();
+      this.filterAccountsPayable();
       this.dataToSend = {};
       this.JournalMovements = [];
       this.progressBar = false;
@@ -348,7 +347,7 @@ export class ExpenseRecordComponent implements OnInit {
     this.progressBar = true;
     this.isCreatingExpense = false;
     this.inicialize();
-    this.getExpenses();
+    this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
   }
 
   editExpense() {
@@ -357,7 +356,7 @@ export class ExpenseRecordComponent implements OnInit {
       this.isEditingExpense = false;
       this.isCreatingExpense = false;
       this.inicialize();
-      this.getExpenses();
+      this.filterAccountsPayable();
       this.dataToSend = {};
       this.JournalMovements = [];
       this.progressBar = false;
@@ -399,7 +398,7 @@ export class ExpenseRecordComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.expensesService.deleteExpense(idExpense).subscribe((response) => {
-          this.getExpenses();
+          this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
           this.openSnackBar('¡Gasto eliminado!');
         }, err => {
           this.openSnackBar('¡Error de servidor!');
@@ -422,5 +421,73 @@ export class ExpenseRecordComponent implements OnInit {
         this.router.navigate([url]);
       }
     });
+  }
+  filterAccountsPayable() {
+    this.skipNumber = 0;
+    this.spinner = true;
+    this.loadData = false;
+    if (this.filterInput.trim() === '') {
+      this.changeItemPerPage();
+    } else {
+      this.getNumberOfRegisters(this.filterInput.trim());
+      this.getExpenses(0, this.defaultNumRegistersPerPage, this.filterInput.trim());
+    }
+  }
+  changeItemPerPage() {
+    this.loadData = false;
+      this.spinner = true;
+    if (this.filterInput.trim() === '' || this.filterInput.trim() === undefined) {
+      this.getNumberOfRegisters('');
+    this.skipNumber = 0;
+      this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
+    } else {
+      this.getNumberOfRegisters(this.filterInput.trim());
+    this.skipNumber = 0;
+      this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
+    }
+  }
+  pagination(button) {
+    this.spinner = true;
+    this.loadData = false;
+    if (button === 'left') {
+      if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
+        this.paginationFirstNumber = Number(this.paginationFirstNumber) - Number(this.defaultNumRegistersPerPage);
+        this.paginationSecondNumber = Number(this.paginationSecondNumber) - Number(this.defaultNumRegistersPerPage);
+      } else {
+        if (this.paginationSecondNumber === this.numberOfRegisters) {
+          this.paginationSecondNumber = Number(this.paginationFirstNumber) - 1;
+          this.paginationFirstNumber = Number(this.paginationFirstNumber) - Number(this.defaultNumRegistersPerPage);
+        } else {
+          this.paginationFirstNumber = Number(this.paginationFirstNumber) - Number(this.defaultNumRegistersPerPage);
+          this.paginationSecondNumber = Number(this.paginationSecondNumber) - Number(this.defaultNumRegistersPerPage);
+        }
+      }
+      this.skipNumber = Number(this.skipNumber) - Number(this.defaultNumRegistersPerPage);
+      if (this.filterInput === '' || this.filterInput === undefined) {
+        this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
+      } else {
+        this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
+      }
+
+    } else {
+      if (this.numberOfRegisters % this.defaultNumRegistersPerPage === 0) {
+        this.paginationFirstNumber = Number(this.paginationFirstNumber) + Number(this.defaultNumRegistersPerPage);
+        this.paginationSecondNumber = Number(this.paginationSecondNumber) + Number(this.defaultNumRegistersPerPage);
+      } else {
+        if ((this.numberOfRegisters - this.paginationSecondNumber) >= (this.defaultNumRegistersPerPage)) {
+          this.paginationFirstNumber = Number(this.paginationFirstNumber) + Number(this.defaultNumRegistersPerPage);
+          this.paginationSecondNumber = Number(this.paginationSecondNumber) + Number(this.defaultNumRegistersPerPage);
+        } else {
+          this.paginationFirstNumber = Number(this.paginationFirstNumber) + Number(this.defaultNumRegistersPerPage);
+          this.paginationSecondNumber = this.numberOfRegisters;
+        }
+      }
+      this.skipNumber = Number(this.skipNumber) + Number(this.defaultNumRegistersPerPage);
+      if (this.filterInput === '' || this.filterInput === undefined) {
+        this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, '');
+      } else {
+        this.getExpenses(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
+      }
+    }
   }
 }
