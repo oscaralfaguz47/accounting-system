@@ -15,6 +15,7 @@ export class BalanceSheetService {
    }
 
    selectBalanceSheet(idCompany, searchType, initialDate, finalDate, month, year) {
+
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,

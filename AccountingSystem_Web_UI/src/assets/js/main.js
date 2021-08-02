@@ -37,3 +37,7 @@ var myExtObject = (function() {
         }
     }
 })(myExtObject || {})
+
+function closeModal() {
+    $('#pay-modal').modal('hide');
+}

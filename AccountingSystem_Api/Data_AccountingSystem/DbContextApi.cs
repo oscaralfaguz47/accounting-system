@@ -1,5 +1,7 @@
 ﻿using Data_AccountingSystem.Mapping.AccountAffectations;
 using Data_AccountingSystem.Mapping.AccountingAccounts;
+using Data_AccountingSystem.Mapping.AccountsPayable;
+using Data_AccountingSystem.Mapping.AccountsPayableMovements;
 using Data_AccountingSystem.Mapping.Companies;
 using Data_AccountingSystem.Mapping.Customes;
 using Data_AccountingSystem.Mapping.D151Options;
@@ -18,6 +20,8 @@ using Data_AccountingSystem.Mapping.UserCompanies;
 using Data_AccountingSystem.Mapping.Users;
 using Entities_AccountingSystem.AccountAffectations;
 using Entities_AccountingSystem.AccountingAccounts;
+using Entities_AccountingSystem.AccountsPayable;
+using Entities_AccountingSystem.AccountsPayableMovements;
 using Entities_AccountingSystem.Companies;
 using Entities_AccountingSystem.Customers;
 using Entities_AccountingSystem.D151Options;
@@ -62,6 +66,8 @@ namespace Data_AccountingSystem
         public DbSet<D151Option> D151Options { get; set; }
         public DbSet<MovementType> MovementsType { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<AccountPayable> AccountsPayable { get; set; }
+        public DbSet<AccountsPayableMovement> AccountsPayableMovements { get; set; }
 
         public DbContextApi(DbContextOptions<DbContextApi> options) : base(options)
         {
@@ -89,6 +95,8 @@ namespace Data_AccountingSystem
             modelBuilder.ApplyConfiguration(new D151OptionMap());
             modelBuilder.ApplyConfiguration(new MovementTypeMap());
             modelBuilder.ApplyConfiguration(new ExpenseMap());
+            modelBuilder.ApplyConfiguration(new AccountPayableMap());
+            modelBuilder.ApplyConfiguration(new AccountsPayableMovementMap());
         }
 
     }

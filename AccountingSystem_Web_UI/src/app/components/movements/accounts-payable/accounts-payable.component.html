@@ -1,0 +1,155 @@
+<div class="globalContentForm">
+
+    <mat-card>
+        <mat-card-title class="table-title">Cuentas por Pagar</mat-card-title>
+
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span>
+        </mat-card-subtitle>
+        <input *ngIf="loadData" style="width: 240px;" placeholder="Buscar por Proveedor o Detalle" type="text" id="accounts-payable-filter" (change)="filterAccountsPayable()" [(ngModel)]="filterInput">
+
+    </mat-card>
+    <mat-card>
+        <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
+        <div class="table-responsive" *ngIf="loadData">
+
+            <table *ngIf="!spinner" mat-table [dataSource]="accountsPayableData" class="mat-elevation-z8">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="providerName">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> #Proveedor </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.provider}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accountingDate">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha de Registro </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountingDate | date:'dd/MM/yyyy'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="expirationDate">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha de vencimiento </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.expirationDate | date:'dd/MM/yyyy'}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="creditDays">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Días de Crédito </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.creditDays}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="daysToExpire">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Días a vencer </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> <span *ngIf="element.daysToExpire >= 1">{{element.daysToExpire}}</span> <span class="redText" *ngIf="element.daysToExpire < 1">0</span> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalAmount">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto Total </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.totalAmount | number}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="balanceAmount">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Saldo </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.balanceAmount | number}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="details">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Detalles </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.details}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accountStatus">
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> <span class="redLabel" *ngIf="element.accountStatus == true">Pendiente</span> <span class="greenLabel" *ngIf="element.accountStatus == false">Cancelada</span> </td>
+                </ng-container>
+
+                <ng-container matColumnDef="icons" stickyEnd>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef></th>
+                    <td class="tableCells" mat-cell *matCellDef="let element">
+                        <div class="cell-icons">
+
+                            <a matTooltip="Eliminar" *ngIf="element.idExpense == null">
+                                <mat-icon>delete</mat-icon>
+                            </a>
+                            <a matTooltip="Editar" *ngIf="element.idExpense == null">
+                                <mat-icon>edit</mat-icon>
+                            </a>
+                            <a *ngIf="element.accountStatus == true" (click)="openModal(element)" matTooltip="Saldar" data-toggle="modal" data-target="#pay-modal">
+                                <mat-icon>payment</mat-icon>
+                            </a>
+
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+
+            </table>
+            <div class="pagination-container" *ngIf="accountsPayableData.length != 0 && !spinner">
+                <select name="" id="" [(ngModel)]="defaultNumRegistersPerPage" (change)="changeItemPerPage()">
+          <option value="30">30</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="300">300</option>
+        </select>
+                <span>{{paginationFirstNumber}} - {{paginationSecondNumber}} de {{numberOfRegisters}}</span>
+                <button (click)="pagination('left')" [disabled]="paginationFirstNumber === 1"><i class="fa fa-chevron-left"
+            aria-hidden="true"></i></button>
+                <button [disabled]="numberOfRegisters === paginationSecondNumber" (click)="pagination('right')"><i
+            class="fa fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+
+            <div class="container" *ngIf="accountsPayableData.length == 0 && !spinner">
+                <br>
+                <br>
+                <p class="row justify-content-center text-danger">No existen registros</p>
+            </div>
+        </div>
+
+
+    </mat-card>
+
+</div>
+
+<!-- Modal -->
+<!-- Pay Account Payable-->
+<div class="modal fade" id="pay-modal" data-backdrop="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Saldar cuenta a: {{selectedAccount.provider}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <app-spinner-loading *ngIf="allAccounts.length === 0 || submitingData"></app-spinner-loading>
+                <div *ngIf="allAccounts.length > 0 && !submitingData">
+                    <p><strong>Monto Total CXP:</strong> ${{selectedAccount.totalAmount | number}}</p>
+                    <p><strong>Saldo actual:</strong> ${{selectedAccount.balanceAmount | number}}</p>
+                    <br>
+                    <span><strong>Detalle</strong></span>
+                    <textarea style="width: 100%;" cols="30" rows="3" [(ngModel)]="accountPayableDetails" maxlength="150"></textarea>
+                    <span><strong>Cuenta a acreditar</strong></span><br>
+                    <select [(ngModel)]="creditedAccount">
+            <option *ngFor="let option of allAccounts" [value]="option.idAccountingAccount">{{option.accountName}}
+            </option>
+          </select>
+                    <div class="cancel-amount-cont1">
+                        <div class="cancel-amount-cont2">
+                            <p>Monto a cancelar</p>
+                            $ <input type="number" id="txtAmountToPay" [(ngModel)]="txtAmountToPay">
+                        </div>
+                        <span *ngIf="validationAmountGreater" class="text-danger">El monto a cancelar no puede ser mayor al
+              saldo</span>
+                        <span *ngIf="validationMessage" class="text-danger">Todos los campos son requeridos</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button mat-button type="button" class="btnCreate" data-dismiss="modal">Cancelar</button>&nbsp;
+                <button [disabled]="submitingData" mat-button type="button" class="btnCreate" (click)="payAccountPayable()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>

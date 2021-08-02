@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { GLOBAL } from './global';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExpensesService {
+export class AccountsPayableService {
 
   public url;
   public idCompany;
@@ -17,7 +17,39 @@ export class ExpensesService {
     this.token = localStorage.getItem('token');
   }
 
-  selectExpenses(skipNumber, numberRegisters, criteria) {
+  selectAccountsPayable(skipNumber, numberRegisters, criteria) {
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+    const httpOptions = {
+      params: new HttpParams()
+        .set('idCompany', this.idCompany)
+        .set('numberRegisters', numberRegisters)
+        .set('skipNumber', skipNumber)
+        .set('criteria', criteria),
+      headers: headersObject,
+    };
+    return this.http.get(this.url + 'AccountsPayable/GetAccountsPayable', httpOptions);
+  }
+
+  selectNumberOfRegisters() {
+
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+
+    const httpOptions = {
+      params: new HttpParams()
+        .set('idCompany', this.idCompany),
+      headers: headersObject,
+
+    };
+    return this.http.get(this.url + 'AccountsPayable/GetNumberOfRegisters', httpOptions);
+  }
+  selectNumberOfRegistersWhenFilter(criteria) {
+
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
@@ -26,29 +58,27 @@ export class ExpensesService {
     const httpOptions = {
       params: new HttpParams()
         .set('idCompany', this.idCompany)
-        .set('numberRegisters', numberRegisters)
-        .set('skipNumber', skipNumber)
         .set('criteria', criteria),
       headers: headersObject,
 
     };
-    return this.http.get(this.url + 'Expenses/GetExpenses', httpOptions);
+    return this.http.get(this.url + 'AccountsPayable/GetNumberOfRegistersWhenFilter', httpOptions);
   }
-  selectNumberOfRegisters(criteria) {
+  filterAccountsPayable(numberRegisters, criteria) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
     });
     const httpOptions = {
       params: new HttpParams()
-      .set('idCompany', this.idCompany)
-      .set('criteria', criteria),
+        .set('idCompany', this.idCompany)
+        .set('numberRegisters', numberRegisters)
+        .set('criteria', criteria),
       headers: headersObject,
     };
-    return this.http.get(this.url + 'Expenses/GetNumberOfRegisters', httpOptions);
+    return this.http.get(this.url + 'AccountsPayable/FilterAccountsPayable', httpOptions);
   }
-
-  createExpense(dataToSend) {
+  payAccountPayable(dataToSend) {
     const headersObject = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + this.token,
@@ -58,30 +88,6 @@ export class ExpensesService {
       headers: headersObject,
 
     };
-    return this.http.post(this.url + 'Expenses/CreateExpense', dataToSend, httpOptions);
-  }
-  editExpense(dataToSend) {
-    const headersObject = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.token,
-    });
-
-    const httpOptions = {
-      headers: headersObject,
-
-    };
-    return this.http.put(this.url + 'Expenses/UpdateExpense', dataToSend, httpOptions);
-  }
-  deleteExpense(idExpense) {
-    console.log(idExpense);
-    const headersObject = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.token,
-    });
-    const httpOptions = {
-      params: new HttpParams().set('idExpense', idExpense),
-      headers: headersObject,
-    };
-    return this.http.put(this.url + 'Expenses/DeleteExpense', idExpense, httpOptions);
+    return this.http.post(this.url + 'AccountsPayable/PayAccountPayable', dataToSend, httpOptions);
   }
 }

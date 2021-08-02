@@ -4,49 +4,51 @@
         <mat-progress-bar *ngIf="progressBar" mode="indeterminate"></mat-progress-bar>
         <mat-card-title class="table-title">Gastos</mat-card-title>
 
-        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span></mat-card-subtitle>
+        <mat-card-subtitle class="table-subtitle">Empresa: <span class="table-subtitle-span">{{companyName}}</span>
+        </mat-card-subtitle>
         <div class="buttonsHeadersContainer">
             <button *ngIf="!isCreatingExpense" class="btnCreate" (click)="displayCreateExpense()" mat-button>Agregar</button>
         </div>
+        <br>
+        <input *ngIf="loadData" style="width: 240px;" placeholder="Buscar" type="text" id="accounts-payable-filter" (change)="filterAccountsPayable()" [(ngModel)]="filterInput"> &nbsp;
+        <mat-icon *ngIf="loadData" matTooltip="Busca por Proveedor, Detalle, Tipo de gasto, D151 ó Condición">help &nbsp;</mat-icon>
     </mat-card>
     <mat-card>
+        <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
         <div *ngIf="!isCreatingExpense && !progressBar" class="table-responsive">
-            <mat-form-field>
-                <mat-label>Filtrar Datos</mat-label>
-                <input matInput (keyup)="applyFilter($event)" placeholder="Empieza una busqueda">
-            </mat-form-field>
-            <table mat-table [dataSource]="expensesDataSource" class="mat-elevation-z8" matSort>
+            <table mat-table [dataSource]="expensesDataSource" class="mat-elevation-z8" *ngIf="loadData">
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="voucher">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header mat-sort-header> #Factura </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> #Factura </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.voucher}} </td>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="providerName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Proveedor </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Proveedor </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.providerName}} </td>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="accountName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Tipo Gasto </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Tipo Gasto </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.accountName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="date">
                     <th class="tableCells" mat-header-cell *matHeaderCellDef> Fecha </th>
-                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.registrationDate | date:'dd/MM/yyyy'}} </td>
+                    <td class="tableCells" mat-cell *matCellDef="let element"> {{element.registrationDate | date:'dd/MM/yyyy'}}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="totalAmount">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Monto Total </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Monto Total </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.totalAmount | number}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="d151Name">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> D151 </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> D151 </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.d151Name}} </td>
                 </ng-container>
 
@@ -56,7 +58,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="movementTypeName">
-                    <th class="tableCells" mat-header-cell *matHeaderCellDef mat-sort-header> Condición </th>
+                    <th class="tableCells" mat-header-cell *matHeaderCellDef> Condición </th>
                     <td class="tableCells" mat-cell *matCellDef="let element"> {{element.movementTypeName}} </td>
                 </ng-container>
 
@@ -65,14 +67,15 @@
                     <td class="tableCells" mat-cell *matCellDef="let element">
                         <div class="cell-icons">
 
-                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null">
+                            <a matTooltip="Eliminar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid">
                                 <mat-icon (click)="deleteExpense(element.idExpense)">delete</mat-icon>
                             </a>
-                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null" (click)="displayeEditPage(element)">
+                            <a matTooltip="Editar" *ngIf="element.idMonthlyClosing == null && !element.accountPayablePaid" (click)="displayeEditPage(element)">
                                 <mat-icon>edit</mat-icon>
                             </a>
                             <a>
-                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya cuenta con movimientos en cuentas por pagar" *ngIf="element.accountPayablePaid">error_outline</mat-icon>
+                                <mat-icon matTooltip="No puedes editar, ya pertenece a un cierre mensual" *ngIf="element.idMonthlyClosing != null && !element.accountPayablePaid">error_outline</mat-icon>
                             </a>
 
                         </div>
@@ -82,13 +85,27 @@
                 <tr mat-header-row *matHeaderRowDef="displayedColumns "></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
             </table>
-            <app-spinner-loading *ngIf="spinner"></app-spinner-loading>
+
+            <div class="pagination-container" *ngIf="expensesDataSource.length != 0 && !spinner">
+                <select name="" id="" [(ngModel)]="defaultNumRegistersPerPage" (change)="changeItemPerPage()">
+                  <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="300">300</option>
+              </select>
+                <span>{{paginationFirstNumber}} - {{paginationSecondNumber}} de {{numberOfRegisters}}</span>
+                <button (click)="pagination('left')" [disabled]="paginationFirstNumber === 1"><i class="fa fa-chevron-left"
+                  aria-hidden="true"></i></button>
+                <button [disabled]="numberOfRegisters === paginationSecondNumber" (click)="pagination('right')"><i
+                  class="fa fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+
             <div class="container" *ngIf="data.length == 0 && !spinner">
                 <br>
                 <br>
                 <p class="row justify-content-center text-danger">No existen registros</p>
             </div>
-            <mat-paginator *ngIf="!progressBar" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 
 
         </div>
@@ -105,7 +122,8 @@
                             <input name="registrationDate" matInput [matDatepicker]="picker" [(ngModel)]="registrationDate" formControlName="registrationDate">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
-                            <mat-error *ngIf="expensesForm.get('registrationDate').hasError('required')">La fecha es requerida</mat-error>
+                            <mat-error *ngIf="expensesForm.get('registrationDate').hasError('required')">La fecha es requerida
+                            </mat-error>
                         </mat-form-field> &nbsp;
 
                         <mat-form-field (click)="validateExistsExpensesAccounts()">
@@ -132,10 +150,10 @@
                         <div>
                             <label id="example-radio-group-label">Condición del gasto</label> <br>
                             <mat-radio-group [(ngModel)]="condition" aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="idMovementType">
-                                <mat-radio-button (click)="changeDebitAccountToCash()" class="example-radio-button" [checked]="condition == movementTypes[indexDebitMovementType]" [value]="movementTypes[0].idMovementType">
+                                <mat-radio-button (click)="changeDebitAccountToCash(movementTypes[0].idMovementType)" class="example-radio-button" [value]="movementTypes[0].idMovementType">
                                     {{movementTypes[0].name}} &nbsp;
                                 </mat-radio-button>
-                                <mat-radio-button (click)="changeDebitAccountToCredit()" class="example-radio-button" [checked]="condition == movementTypes[indexCreditMovementType]" [value]="movementTypes[1].idMovementType">
+                                <mat-radio-button (click)="changeDebitAccountToCredit(movementTypes[1].idMovementType)" class="example-radio-button" [value]="movementTypes[1].idMovementType">
                                     {{movementTypes[1].name}} &nbsp;
                                 </mat-radio-button>
                             </mat-radio-group>&nbsp;
@@ -147,10 +165,25 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field> &nbsp;
-                            <div id="change-debit-account-btn">
-                                <a (click)="enableDebitAccount()">Cambiar cuenta a creditar <span  matTooltip='Habilita la opción "Cuenta a debitar" para elegir otra opción' class="material-icons">
-                                    info
-                                    </span></a>
+                            <mat-form-field *ngIf="isCreditExpense">
+                                <mat-label>Días de Crédito</mat-label>
+                                <mat-select name="creditDays" formControlName="creditDays" [(ngModel)]="creditDays">
+                                    <mat-option [value]="5">5 Días</mat-option>
+                                    <mat-option [value]="10">10 Días</mat-option>
+                                    <mat-option [value]="15">15 Días</mat-option>
+                                    <mat-option [value]="20">20 Días</mat-option>
+                                    <mat-option [value]="25">25 Días</mat-option>
+                                    <mat-option [value]="30">30 Días</mat-option>
+                                    <mat-option [value]="60">60 Días</mat-option>
+                                    <mat-option [value]="90">90 Días</mat-option>
+                                </mat-select>
+                            </mat-form-field> &nbsp;
+
+                            <div id="change-debit-account-btn" *ngIf="!isCreditExpense">
+                                <a (click)="enableDebitAccount()">Cambiar cuenta a creditar <span
+                    matTooltip='Habilita la opción "Cuenta a debitar" para elegir otra opción' class="material-icons">
+                    info
+                  </span></a>
                             </div>
                         </div>
                         <mat-form-field class="example-full-width">

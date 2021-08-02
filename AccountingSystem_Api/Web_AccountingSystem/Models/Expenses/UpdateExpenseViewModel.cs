@@ -19,6 +19,7 @@ namespace Web_AccountingSystem.Models.Expenses
         public int IdD151 { get; set; }
         public int IdMovementType { get; set; }
         public int IdOrigin { get; set; }
+        public int creditDays { get; set; }
 
         public List<UpdateJournalMovementViewModel> JournalMovements { get; set; }
     }

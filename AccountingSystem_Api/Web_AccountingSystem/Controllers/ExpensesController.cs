@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Web_AccountingSystem.Models.Expenses;
 using Entities_AccountingSystem.JournalSeats;
 using Entities_AccountingSystem.JournalMovements;
+using Entities_AccountingSystem.AccountsPayable;
 
 namespace Web_AccountingSystem.Controllers
 {
@@ -28,17 +29,45 @@ namespace Web_AccountingSystem.Controllers
 
         // GET: api/Expenses/GetExpenses
         [HttpGet("[action]")]
-        public async Task<IEnumerable<SelectExpenseViewModel>> GetExpenses(int idCompany)
+        public async Task<IEnumerable<SelectExpenseViewModel>> GetExpenses(int idCompany, int skipNumber, int numberRegisters, string criteria)
         {
-            var expense = await _context.Expenses
-                .Include(i => i.AccountingAccount)
-                .Include(i => i.JournalSeat)
-                .Include(i => i.Provider)
-                .Include(i => i.D151Option)
-                .Include(i => i.MovementType)
-                .Where(i => i.IdCompany == idCompany)
-                .Where(i => i.Status == true)
-                .OrderByDescending(i => i.RegistrationDate).ToListAsync();
+            List<Expense> expense;
+
+            if (criteria == null)
+            {
+                expense = await _context.Expenses
+               .Include(i => i.AccountingAccount)
+               .Include(i => i.JournalSeat)
+               .Include(i => i.Provider)
+               .Include(i => i.D151Option)
+               .Include(i => i.MovementType)
+               .Where(i => i.IdCompany == idCompany)
+               .Where(i => i.Status == true)
+               .OrderByDescending(i => i.RegistrationDate)
+               .Skip(skipNumber)
+               .Take(numberRegisters)
+               .ToListAsync();
+            } else
+            {
+                expense = await _context.Expenses
+              .Include(i => i.AccountingAccount)
+              .Include(i => i.JournalSeat)
+              .Include(i => i.Provider)
+              .Include(i => i.D151Option)
+              .Include(i => i.MovementType)
+              .Where(i => i.IdCompany == idCompany)
+              .Where(i => i.Status == true)
+              .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim()) 
+              || i.MovementType.Name.Contains(criteria.Trim()) || i.D151Option.Name.Contains(criteria.Trim()) 
+              || i.AccountingAccount.AccountName.Contains(criteria.Trim()) 
+              || i.Voucher.Contains(criteria.Trim())) 
+              .OrderByDescending(i => i.RegistrationDate)
+              .Skip(skipNumber)
+              .Take(numberRegisters)
+              .ToListAsync();
+            }
+
+               
             return expense.Select(i => new SelectExpenseViewModel
             {
                 IdExpense = i.IdExpense,
@@ -57,9 +86,35 @@ namespace Web_AccountingSystem.Controllers
                 D151Name = i.D151Option.Name,
                 IdMovementType = i.IdMovementType,
                 MovementTypeName = i.MovementType.Name,
-                IdMonthlyClosing = i.IdMonthlyClosing
+                IdMonthlyClosing = i.IdMonthlyClosing,
+                AccountPayablePaid = i.AccountPayablePaid
             }); ;
         }
+
+
+        // GET: api/Expenses/GetNumberOfRegisters
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetNumberOfRegisters(int idCompany, string criteria)
+        {
+            int numberRegisters = 0;
+            if (criteria == null)
+            {
+                numberRegisters = await _context.Expenses
+               .Where(n => n.IdCompany == idCompany && n.Status == true)
+               .CountAsync();
+            } else
+            {
+                numberRegisters = await _context.Expenses
+             .Where(n => n.IdCompany == idCompany && n.Status == true)
+             .Where(i => i.Provider.Name.Contains(criteria.Trim()) || i.Details.Contains(criteria.Trim())
+              || i.MovementType.Name.Contains(criteria.Trim()) || i.D151Option.Name.Contains(criteria.Trim())
+              || i.AccountingAccount.AccountName.Contains(criteria.Trim())
+              || i.Voucher.Contains(criteria.Trim()))
+             .CountAsync();
+            }
+            return Ok(numberRegisters);
+        }
+
 
         // POST: api/Expenses/CreateExpense
         [HttpPost("[action]")]
@@ -83,6 +138,41 @@ namespace Web_AccountingSystem.Controllers
             }
             var origin = await _context.Origins.FirstOrDefaultAsync(i => i.Name == "Gastos");
             int idOrigin = origin.IdOrigin;
+
+            var movementType = await _context.MovementsType.FirstOrDefaultAsync(i => i.IdMovementType == model.IdMovementType);
+            Nullable <int> idAccountPayable = null;
+
+            
+            if (movementType.Name == "Crédito")
+            {
+                var expirationDate = model.RegistrationDate.AddDays(model.creditDays);
+
+                AccountPayable accountPayable = new AccountPayable
+                {
+                    IdCompany = model.IdCompany,
+                    RegistrationDate = DateTime.Now,
+                    AccountingDate = model.RegistrationDate,
+                    ModificationDate = DateTime.Now,
+                    ExpirationDate = expirationDate,
+                    IdProvider = model.IdProvider,
+                    TotalAmount = model.TotalAmount,
+                    BalanceAmount = model.TotalAmount,
+                    Details = model.Details,
+                    AccountStatus = true,
+                    Status = true
+                };
+                try
+                {
+                    _context.AccountsPayable.Add(accountPayable);
+                     await _context.SaveChangesAsync();
+                    idAccountPayable = accountPayable.IdAccountPayable;
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex);
+                }
+            }
+
             JournalSeat journalSeat = new JournalSeat
             {
                 IdOrigin = idOrigin,
@@ -91,13 +181,14 @@ namespace Web_AccountingSystem.Controllers
                 Description = "Registro de gasto",
                 Amount = model.TotalAmount,
                 Status = true,
-                SeatNumber = seatNumber + 1
+                SeatNumber = seatNumber + 1,
+                IdAccountPayable = idAccountPayable
             };
 
             try
             {
                 _context.JournalSeats.Add(journalSeat);
-                await _context.SaveChangesAsync();
+            
                 var idJournalSeat = journalSeat.IdJournalSeat;
                 var idCompany = model.IdCompany;
 
@@ -132,16 +223,22 @@ namespace Web_AccountingSystem.Controllers
                     TotalAmount = model.TotalAmount,
                     Status = true,
                     IdD151 = model.IdD151,
-                    IdMovementType = model.IdMovementType
+                    IdMovementType = model.IdMovementType,
+                    AccountPayablePaid = false
                 };
 
                 _context.Expenses.Add(expense);
-
+               
+                if (movementType.Name == "Crédito")
+                {
+                    var accountPayable = await _context.AccountsPayable.FirstOrDefaultAsync(i => i.IdAccountPayable == idAccountPayable);
+                    accountPayable.IdExpense = expense.IdExpense;
+                }
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
             return Ok();
         }
@@ -181,6 +278,75 @@ namespace Web_AccountingSystem.Controllers
 
             journalSeat.Date = model.RegistrationDate;
             journalSeat.Amount = model.TotalAmount;
+            var movementType = await _context.MovementsType.FirstOrDefaultAsync(i => i.IdMovementType == model.IdMovementType);
+            if (movementType.Name == "Crédito")
+            {
+                var expirationDate = model.RegistrationDate.AddDays(model.creditDays);
+                var accountPayable = await _context.AccountsPayable.FirstOrDefaultAsync(x => x.IdAccountPayable == journalSeat.IdAccountPayable);
+                if (accountPayable != null)
+                {
+                    accountPayable.AccountingDate = model.RegistrationDate;
+                    accountPayable.ModificationDate = DateTime.Now;
+                    accountPayable.ExpirationDate = expirationDate;
+                    accountPayable.IdProvider = model.IdProvider;
+
+                    if (accountPayable.TotalAmount == accountPayable.BalanceAmount)
+                    {
+                        accountPayable.BalanceAmount = model.TotalAmount;
+                    }
+                    else if (accountPayable.TotalAmount > model.TotalAmount)
+                    {
+                        decimal valueToAddToBalance = model.TotalAmount - accountPayable.TotalAmount;
+                        accountPayable.BalanceAmount = accountPayable.BalanceAmount + valueToAddToBalance;
+                    }
+                    else if (accountPayable.TotalAmount < model.TotalAmount)
+                    {
+                        decimal valueToSubtractToBalance = accountPayable.TotalAmount - model.TotalAmount;
+                        accountPayable.BalanceAmount = accountPayable.BalanceAmount - valueToSubtractToBalance;
+                    }
+                    accountPayable.TotalAmount = model.TotalAmount;
+                    accountPayable.Details = model.Details;
+                } else
+                {
+                    //Create new Account Payable
+
+                    AccountPayable accountPayableToCreate = new AccountPayable
+                    {
+                        IdCompany = expense.IdCompany,
+                        RegistrationDate = DateTime.Now,
+                        AccountingDate = model.RegistrationDate,
+                        ModificationDate = DateTime.Now,
+                        ExpirationDate = expirationDate,
+                        IdProvider = model.IdProvider,
+                        TotalAmount = model.TotalAmount,
+                        BalanceAmount = model.TotalAmount,
+                        Details = model.Details,
+                        AccountStatus = true,
+                        Status = true,
+                        IdExpense = expense.IdExpense
+                    };
+                    try
+                    {
+                        _context.AccountsPayable.Add(accountPayableToCreate);
+                        await _context.SaveChangesAsync();
+                        journalSeat.IdAccountPayable = accountPayableToCreate.IdAccountPayable;
+                    }
+                    catch (Exception ex)
+                    {
+                        return BadRequest(ex);
+                    }
+                }
+                
+
+            } else {
+                
+                if (journalSeat.IdAccountPayable != null)
+                {
+                    var accountPayable = await _context.AccountsPayable.FirstOrDefaultAsync(x => x.IdAccountPayable == journalSeat.IdAccountPayable);
+                    _context.AccountsPayable.Remove(accountPayable);
+                }
+                journalSeat.IdAccountPayable = null;
+            }
 
             try
             {
@@ -241,6 +407,7 @@ namespace Web_AccountingSystem.Controllers
             var idJournalSeat = expense.IdJournalSeat;
             var journalSeat = await _context.JournalSeats.FirstOrDefaultAsync(j => j.IdJournalSeat == idJournalSeat);
             var journalMovements = await _context.JournalMovements.Where(j => j.IdJournalSeat == idJournalSeat).ToListAsync();
+            var accountPayable = await _context.AccountsPayable.FirstOrDefaultAsync(x => x.IdAccountPayable == journalSeat.IdAccountPayable);
 
 
             if (expense == null || journalMovements == null)
@@ -250,6 +417,10 @@ namespace Web_AccountingSystem.Controllers
 
             try
             {
+                if (accountPayable != null)
+                {
+                    accountPayable.Status = false;
+                }
                 expense.Status = false;
                 journalSeat.Status = false;
                 foreach (var movement in journalMovements)
