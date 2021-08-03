@@ -4,13 +4,11 @@ using Entities_AccountingSystem.AccountsPayableMovements;
 using Entities_AccountingSystem.JournalMovements;
 using Entities_AccountingSystem.JournalSeats;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Web_AccountingSystem.Models.AccountsPayable;
 
@@ -167,7 +165,7 @@ namespace Web_AccountingSystem.Controllers
             {
                 IdOrigin = idOrigin,
                 IdCompany = accountPayable.IdCompany,
-                Date = DateTime.Now,
+                Date = model.appliedDate,
                 Description = movementDetail,
                 Amount = model.AppliedAmount,
                 Status = true,
@@ -197,7 +195,7 @@ namespace Web_AccountingSystem.Controllers
                         IdCompany = accountPayable.IdCompany,
                         IdAccountingAccount = jmForExistingAccountPayable.IdAccountingAccount,
                         IdAccountAffectation = debitMovementType.IdAccountAffectation,
-                        Date = DateTime.Now,
+                        Date = model.appliedDate,
                         TotalAmount = model.AppliedAmount,
                         Description = movementDetail,
                         Status = true,
@@ -211,7 +209,7 @@ namespace Web_AccountingSystem.Controllers
                     IdCompany = accountPayable.IdCompany,
                     IdAccountingAccount = model.IdCreditedAccount,
                     IdAccountAffectation = creditMovementType.IdAccountAffectation,
-                    Date = DateTime.Now,
+                    Date = model.appliedDate,
                     TotalAmount = model.AppliedAmount,
                     Description = movementDetail,
                     Status = true,
@@ -223,7 +221,7 @@ namespace Web_AccountingSystem.Controllers
                 {
                     IdAccountPayable = accountPayable.IdAccountPayable,
                     IdJournalSeat = idJournalSeat,
-                    RegistrationDate = DateTime.Now,
+                    RegistrationDate = model.appliedDate,
                     AppliedAmount = model.AppliedAmount,
                     Details = model.Details
                 };

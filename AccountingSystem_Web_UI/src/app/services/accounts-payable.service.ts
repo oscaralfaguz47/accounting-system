@@ -33,6 +33,18 @@ export class AccountsPayableService {
     return this.http.get(this.url + 'AccountsPayable/GetAccountsPayable', httpOptions);
   }
 
+  selectAccountsPayableMovements(idAccountPayable) {
+    const headersObject = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.token,
+    });
+    const httpOptions = {
+      params: new HttpParams()
+        .set('idAccountPayable', idAccountPayable),
+      headers: headersObject,
+    };
+    return this.http.get(this.url + 'AccountsPayableMovements/GetAccountsPayableMovements', httpOptions);
+  }
   selectNumberOfRegisters() {
 
     const headersObject = new HttpHeaders({

@@ -126,6 +126,7 @@ export class ExpenseRecordComponent implements OnInit {
   getExpenses(skipNumber, numberRegisters, criteria) {
     this.expensesService.selectExpenses(skipNumber, numberRegisters, criteria).subscribe((res: any) => {
       this.data = res;
+      console.log(res);
       this.expensesDataSource = res;
       this.spinner = false;
       this.progressBar = false;

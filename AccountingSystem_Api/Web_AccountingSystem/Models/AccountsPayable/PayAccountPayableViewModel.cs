@@ -11,5 +11,6 @@ namespace Web_AccountingSystem.Models.AccountsPayable
         public decimal AppliedAmount { get; set; }
         public string Details { get; set; }
         public int IdCreditedAccount { get; set; }
+        public DateTime appliedDate { get; set; }
     }
 }
