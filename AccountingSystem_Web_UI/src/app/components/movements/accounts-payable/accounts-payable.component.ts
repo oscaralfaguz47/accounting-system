@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountsPayableService } from '../../../services/accounts-payable.service';
-import { element } from 'protractor';
-import * as internal from 'assert';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { SnackBarSavedChangesComponent } from '../../shared/snack-bar-saved-changes/snack-bar-saved-changes.component';
 import { AccountingAccoutsService } from 'src/app/services/accounting-accouts.service';
 import { ConfirmationMessageComponent } from '../../shared/confirmation-message/confirmation-message.component';
+import { element } from 'protractor';
 
 declare  function closeModal(): any;
 
@@ -28,6 +27,7 @@ export class AccountsPayableComponent implements OnInit {
   public companyName: string;
   displayedColumns: string[] = ['providerName', 'accountingDate', 'expirationDate', 'creditDays', 'daysToExpire', 'totalAmount', 'balanceAmount', 'details', 'accountStatus', 'icons'];
 
+  appliedDate: Date;
   selectedAccount: any = {};
   txtAmountToPay: number;
   accountPayableDetails: string;
@@ -36,6 +36,9 @@ export class AccountsPayableComponent implements OnInit {
   validationMessage: boolean;
   validationAmountGreater: boolean;
   submitingData: boolean;
+  accountsPayableMovementsData: any;
+  viewAccountsPayableMovements: boolean;
+  modalTitle: string;
 
   constructor(
     private accountsPayableService: AccountsPayableService,
@@ -49,6 +52,7 @@ export class AccountsPayableComponent implements OnInit {
     this.skipNumber = 0;
     this.defaultNumRegistersPerPage = 30;
     this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, '');
+    console.log('Today is: ' + this.appliedDate);
   }
   getNumberOfRegisters() {
     this.accountsPayableService.selectNumberOfRegisters().subscribe((res: any) => {
@@ -68,6 +72,17 @@ export class AccountsPayableComponent implements OnInit {
       this.allAccounts = res;
       var bankIndex = this.allAccounts.findIndex(account => account.accountName === 'Bancos');
       this.creditedAccount = this.allAccounts[bankIndex].idAccountingAccount;
+    });
+  }
+  getAccountsPayableMovements(element) {
+    document.getElementById('modalDialog').classList.add('modal-lg');
+    this.viewAccountsPayableMovements = false;
+    this.selectedAccount = element;
+    this.modalTitle = 'Movimientos de pagos a:';
+    this.allAccounts = [];
+    this.accountsPayableService.selectAccountsPayableMovements(element.idAccountPayable).subscribe((res: any) => {
+      this.accountsPayableMovementsData = res;
+      this.viewAccountsPayableMovements = true;
     });
   }
   getAccountsPayable(skipNumber, numberRegisters, criteria) {
@@ -92,7 +107,6 @@ export class AccountsPayableComponent implements OnInit {
     if (this.filterInput.trim() === '') {
       this.changeItemPerPage();
     } else {
-      console.log('aquíiiiiiiiii');
       this.getNumberOfRegistersWhenFilter(this.filterInput.trim());
       this.getAccountsPayable(0, this.defaultNumRegistersPerPage, this.filterInput.trim());
     }
@@ -165,6 +179,9 @@ export class AccountsPayableComponent implements OnInit {
     }
   }
   openModal(element) {
+    document.getElementById('modalDialog').classList.remove('modal-lg');
+    this.modalTitle = 'Saldar cuenta a:';
+    this.viewAccountsPayableMovements = false;
     this.allAccounts = [];
     this.validationMessage = false;
     this.validationAmountGreater = false;
@@ -173,14 +190,17 @@ export class AccountsPayableComponent implements OnInit {
     this.txtAmountToPay = element.balanceAmount;
     this.accountPayableDetails = element.details;
   }
+
   payAccountPayable() {
+    console.log(this.appliedDate);
     var dataToSend = {
       'IdAccountPayable': this.selectedAccount.idAccountPayable,
       'AppliedAmount': this.txtAmountToPay,
       'Details': this.accountPayableDetails,
-      'IdCreditedAccount': this.creditedAccount
+      'IdCreditedAccount': this.creditedAccount,
+      'appliedDate': this.appliedDate
     };
-    if(this.txtAmountToPay === 0 || this.txtAmountToPay === null || this.accountPayableDetails === ''){
+    if(this.txtAmountToPay === 0 || this.txtAmountToPay === null || this.accountPayableDetails === '' || this.appliedDate === null || this.appliedDate === undefined){
       this.validationMessage = true;
       this.validationAmountGreater = false;
     } else {
@@ -200,6 +220,7 @@ completePayment(dataToSend){
     this.getAccountsPayable(this.skipNumber, this.defaultNumRegistersPerPage, this.filterInput);
     this.submitingData = false;
     closeModal();
+    this.appliedDate = undefined;
     this.openSnackBar('¡Movimiento realizado correctamente!');
   }, err => {
     this.openSnackBar('¡Error de servidor!');
